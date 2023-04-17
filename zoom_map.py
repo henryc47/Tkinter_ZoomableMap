@@ -68,6 +68,8 @@ class ZoomMap:
         self.nodes_y_coords = [] #vertical position in global coordinates of the centre of the node
         self.nodes_x = [] #horizontal position in pixel coordinates of the centre of the node
         self.nodes_y = [] #vertical position in pixel coordinates of the centre of the node
+        self.nodes_x_original = [] #copy of self.nodes_x without zoom applied
+        self.nodes_y_original = [] #copy of self.nodes_y without zoom applied
         self.nodes_radii = []  #radius of the node, pixels
         self.nodes_colours = [] #colour of the nodes
         self.nodes_name = [] #name of the each node 
@@ -90,6 +92,11 @@ class ZoomMap:
         self.lines_start_y = [] #vertical position in pixel coordinates of the start of the line
         self.lines_end_x = [] #horizontal position in pixel coordinates of the end of the line
         self.lines_end_y = [] #vertical position in pixel coordinates of the end of the line
+        #copy of pixel coordinate arrays before zoom has been applied
+        self.lines_start_x_original = []
+        self.lines_start_y_original = []
+        self.lines_end_x_original = []
+        self.lines_end_y_original = []
         self.lines_width = [] #width of the line, pixels
         #flags
         self.lines_assigned_flag = False #have lines been stored yet
@@ -236,7 +243,22 @@ class ZoomMap:
         self.assign_nodes_colours(nodes_colours) #assign the nodes colours
         self.assign_nodes_names(nodes_names) #assign the nodes names
         self.nodes_assigned_flag = True
-      
+    
+    
+
+    #render the nodes
+    def render_nodes(self):
+        for i in range(self.num_nodes):
+            x = self.nodes_x[i]
+            y = self.nodes_y[i]
+            radius = self.nodes_radii[i]
+            colour = self.nodes_colours[i]
+            if self.node_canvas_ids[i]!='blank':
+                #delete the old oval object if one exists
+                self.map.delete(self.node_canvas_ids[i])
+            id = self.map.create_oval(x-radius,y-radius,x+radius,y+radius,fill=colour) #draw a circle to represent the node
+            self.node_canvas_ids[i] = id #store the id so we can delete the object later
+            
 
     #assign the nodes new x/y coordinates in the global coordinate frame
     def assign_nodes_positions(self,nodes_x_coords,nodes_y_coords):
@@ -245,11 +267,11 @@ class ZoomMap:
 
     #assign the nodes new radii
     def assign_nodes_radii(self,nodes_radii):
-        self.node_radii = nodes_radii
+        self.nodes_radii = nodes_radii
 
     #assign the nodes new colours
     def assign_nodes_colours(self,nodes_colours):
-        self.node_colours = nodes_colours
+        self.nodes_colours = nodes_colours
 
     #assign the nodes new names
     def assign_nodes_names(self,nodes_names):
@@ -266,8 +288,15 @@ class ZoomMap:
     #calculate node positions in unzoomed pixel coordinates
     def calculate_node_pixel_coordinates(self):
         for i in range(self.num_nodes): #go through each node
-            self.nodes_x[i],self.nodes_y[i] = self.convert_coords_to_pixels(self.nodes_x_coords[i],self.nodes_y_coords[i]) #calculate the position in unzoomed pixel coordinates of each node
-        
+            node_x,node_y = self.convert_coords_to_pixels(self.nodes_x_coords[i],self.nodes_y_coords[i]) #calculate the position in unzoomed pixel coordinates of each node
+            #append this info to existing coordinate lists
+            self.nodes_x.append(node_x)
+            self.nodes_y.append(node_y)
+        #make a copy of pixel position to store the original position before zooming
+        self.nodes_x_original = self.nodes_x
+        self.nodes_y_original = self.nodes_y    
+        self.node_canvas_ids = ['blank']*self.num_nodes #canvas ids for the nodes themsleves
+    
     #private tools for operating on lines
 
     #find and return the most extreme coordinates found in the list of lines
@@ -291,10 +320,20 @@ class ZoomMap:
 
 
     #calculate line positions in unzoomed pixel coordinates
-    def calculate_line_pixel_coordinates(self):
+    def calculate_line_pixel_coordinates(self):      
         for i in range(self.num_lines): #go through each line
-            self.lines_start_x[i],self.lines_start_y[i] = self.convert_coords_to_pixels(self.lines_start_x_coord[i],self.lines_start_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line start
-            self.lines_end_x[i],self.lines_end_y[i] = self.convert_coords_to_pixels(self.lines_end_x_coord[i],self.lines_end_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line end
+            line_start_x,line_start_y = self.convert_coords_to_pixels(self.lines_start_x_coord[i],self.lines_start_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line start
+            line_end_x,line_end_y = self.convert_coords_to_pixels(self.lines_end_x_coord[i],self.lines_end_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line end
+            #append this info to the existing coordinate lists
+            self.lines_start_x.append(line_start_x)
+            self.lines_start_y.append(line_start_y)
+            self.lines_end_x.append(line_end_x)
+            self.lines_end_y.append(line_end_y)      
+        #create a copy of these positions to store positions before zoom is applied
+        self.lines_start_x_original = self.lines_start_x
+        self.lines_start_y_original = self.lines_start_y
+        self.lines_end_x_original = self.lines_end_x
+        self.lines_end_y_original = self.lines_end_y
 
     #private tools for operating on compound lines
 

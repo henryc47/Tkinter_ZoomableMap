@@ -55,6 +55,9 @@ class example():
             latitude,longitude = extract_coordinates(position)
             self.node_latitudes.append(latitude)
             self.node_longitudes.append(longitude)
+        self.num_nodes = len(self.node_names)
+        self.node_radii = [5]*self.num_nodes
+        self.node_colours = ['black']*self.num_nodes
 
     #create the window in which our map will be displayed
     def create_window(self):
@@ -71,6 +74,13 @@ class example():
         map_width = window_width-440
         map_height = window_height-100
         self.map = zoom_map.ZoomMap(map_width,map_height,self.window,'white')
+        #now map is created, draw the nodes
+        self.map.create_nodes(self.node_longitudes,self.node_latitudes,self.node_radii,self.node_colours,self.node_names)
+        self.map.determine_scale() #use automatic scaling by default
+        self.map.calculate_pixel_coordinates() #calculate pixel coordinates of objects
+        self.map.render_nodes() #render the nodes
+
+        
         
 
 def main():
