@@ -2,6 +2,7 @@
 
 import pandas as pd #for loading node and line info  from csv files
 import tkinter as tk
+import zoom_map
 
 #extract latitude and longitude from a string of coordinates (in the format provided by google maps)
 def extract_coordinates(coordinates):
@@ -27,6 +28,7 @@ class example():
     def __init__(self):
         self.setup_data() #import and setup data for our example
         self.create_window() #create the window
+        self.setup_map() #create the map
 
     def setup_data(self):
         while True: #wait till valid mode selected
@@ -66,8 +68,10 @@ class example():
     def setup_map(self):
         window_width = self.window.winfo_screenwidth()
         window_height = self.window.winfo_screenheight()
-        self.canvas_width = window_width-440
-        self.canvas_height = window_height-100
+        map_width = window_width-440
+        map_height = window_height-100
+        self.map = zoom_map.ZoomMap(map_width,map_height,self.window,'white')
+        
 
 def main():
     a = example()

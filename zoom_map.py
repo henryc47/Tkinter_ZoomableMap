@@ -9,6 +9,7 @@ import tkinter as tk
 class ZoomMap:
     #create the map
     def __init__(self,map_width,map_height,window,background="white",zoom_control="<MouseWheel>",drag_start_control='<ButtonPress-1>',drag_end_control="<B1-Motion>",print_warnings=True,scroll_gain=1):
+        print('foo')
         self.map_width = map_width #width (horizontal length) of the map display in pixels
         self.map_height = map_height #height (vertical length) of the map display in pixels
         self.map_center_x = int(self.map_width/2) #midpoint of the map in pixels, horizontal
@@ -19,29 +20,30 @@ class ZoomMap:
         self.scroll_gain = scroll_gain #how fast is panning and zooming
         #create the canvas object
         self.map = tk.Canvas(self.window,bg=self.background,width=self.map_width,height=self.map_height)
+        self.map.pack(side = tk.RIGHT)
         #bind the canvas to the controls to zoom and drag the image
         #try blocks catch invalid keybindings and replace them with the defaults
         #bind zoom and drag
         try:
-            self.canvas.bind(zoom_control,self.zoom_map)
+            self.map.bind(zoom_control,self.zoom_map)
         except:
             if self.print_warnings:
                 print("WARNING : ",zoom_control,' not a valid keybinding for tkinter. Defaulting to  "<MouseWheel>", for zoom keybinding')
-            self.canvas.bind("<MouseWheel>",self.zoom_map)
+            self.map.bind("<MouseWheel>",self.zoom_map)
         #bind starting to drag the map
         try:
-            self.canvas.bind(drag_start_control,self.drag_start_map)
+            self.map.bind(drag_start_control,self.drag_start)
         except:
             if self.print_warnings:
                 print("WARNING : ",drag_start_control,' not a valid keybinding for tkinter. Defaulting to  "<ButtonPress-1>", for drag start keybinding')
-            self.canvas.bind("<ButtonPress-1>",self.drag_start_map)
+            self.canvas.bind("<ButtonPress-1>",self.drag_start)
         #bind stopping a drag
         try:
-            self.canvas.bind(drag_end_control,self.drag_end_map)
+            self.map.bind(drag_end_control,self.drag_end)
         except:
             if self.print_warnings:
                 print("WARNING : ",drag_end_control,' not a valid keybinding for tkinter. Defaulting to  "<B1-Motion>", for drag end keybinding')
-            self.canvas.bind("<B1-Motion>",self.drag_end_map)
+            self.map.bind("<B1-Motion>",self.drag_end)
         
         #create containers for objects to be displayed on the map
         #two types of objects we support at the moment
@@ -183,11 +185,11 @@ class ZoomMap:
         extreme_east = -1
         extreme_west = 1
         extremes_defined = False #have we determined extreme positions yet
-        if self.nodes_assigned_flag==True #if we have assigned nodes
+        if self.nodes_assigned_flag==True: #if we have assigned nodes
             extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_nodes() #get the extreme positions of the nodes
             extremes_defined = True #we have defined extremes which we can compare to
         #compare with 
-        if self.lines_assigned_flag==True #if we have assigned lines
+        if self.lines_assigned_flag==True: #if we have assigned lines
             if extremes_defined==True: #and we have already measured extremes, compare the extremes and select the most extreme
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_lines() #get the new extreme positions from the lines
                 extreme_north = max(extreme_north,new_extreme_north)
@@ -198,7 +200,7 @@ class ZoomMap:
                 extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_lines() #get the extreme positions of the lines
                 extremes_defined = True #we have defined extremes which we can compare to
         #compare with compound lines if they exist
-        if self.compound_lines_assigned_flag==True #if we have assigned compound lines
+        if self.compound_lines_assigned_flag==True: #if we have assigned compound lines
             if extremes_defined==True: #and we have already measured extremes, compare the extremes and select the most extreme
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_compound_lines() #get the new extreme positions from the compound lines
                 extreme_north = max(extreme_north,new_extreme_north)
@@ -209,7 +211,7 @@ class ZoomMap:
                 extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_compound_lines() #get the extreme positions of the compound lines
                 extremes_defined = True #we have defined extremes which we can compare to
         #compare with pie nodes if they exist
-        if self.compound_lines_assigned_flag==True #if we have assigned compound lines
+        if self.compound_lines_assigned_flag==True: #if we have assigned compound lines
             if extremes_defined==True: #and we have already measured extremes, compare the extremes and select the most extreme
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_pie_nodes() #get the new extreme positions from the pie_nodes lines
                 extreme_north = max(extreme_north,new_extreme_north)
@@ -317,15 +319,15 @@ class ZoomMap:
     #tools to control overall movement of the map
 
     #zoom the map in/out
-    def zoom_control(self,event):
+    def zoom_map(self,event):
         pass #placeholder for now
 
     #start dragging the map
-    def drag_start_control(self,event):
+    def drag_start(self,event):
         self.map.scan_mark(event.x,event.y) #record the position at the start of the movement
 
     #stop dragging the map
-    def drag_end_control(self,event):
+    def drag_end(self,event):
         self.map.scan_dragto(event.x,event.y,gain=self.scroll_gain) #move the "camera" in accordance with the users drag
 
 
