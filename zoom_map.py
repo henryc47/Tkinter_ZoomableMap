@@ -153,7 +153,7 @@ class ZoomMap:
         latitude_offset = coord_y-self.start_y #units between upper-left and position, y axis
         longitude_offset = coord_x-self.start_x #units between upper left and position, x axis
         y = -(latitude_offset)*self.pixels_per_unit #multiply by -1 as positive pixels are down, but positive coords are north
-        x = -(longitude_offset)*self.pixels_per_unit #multiply by -1 as positive pixels are left, but positive coords are west
+        x = (longitude_offset)*self.pixels_per_unit 
         return x,y
 
     #automatically calculate the scale of the map
