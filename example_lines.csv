@@ -1,0 +1,235 @@
+Start,End
+Berowra,Mt Ku-Ring Gai
+Berowra,Hornsby
+Mt Ku-Ring Gai,Mount Colah
+Mount Colah,Asquith
+Asquith,Hornsby
+Hornsby,Waitara
+Waitara,Wahroonga
+Wahroonga,Warrawee
+Warrawee,Turramurra
+Turramurra,Pymble
+Pymble,Gordon
+Gordon,Killara
+Gordon,Chatswood
+Killara,Lindfield
+Lindfield,Roseville
+Roseville,Chatswood
+Chatswood,Atarmon
+Chatswood,St Leonards
+Atarmon,St Leonards
+St Leonards,Wollstonecraft
+St Leonards,North Sydney
+Wollstonecraft,Waverton
+Waverton,North Sydney
+North Sydney,Milsons Point
+Milsons Point,Wynyard
+Wynyard,Town Hall
+Town Hall,Central
+Hornsby,Normanhurst
+Hornsby,Epping
+Normanhurst,Thornleigh
+Thornleigh,Pennant Hills
+Pennant Hills,Beecroft
+Beecroft,Cheltenham
+Cheltenham,Epping
+Epping,Eastwood
+Epping,Strathfield
+Eastwood,Denistone
+Eastwood,Rhodes
+Denistone,West Ryde
+West Ryde,Meadowbank
+Meadowbank,Rhodes
+Rhodes,Concord West
+Rhodes,Strathfield
+Concord West,North Strathfield
+North Strathfield,Strathfield
+Central,Redfern
+Central,Strathfield
+Redfern,Macdonaldtown
+Redfern,Strathfield
+Redfern,Burwood
+Redfern,Ashfield
+Redfern,Newtown
+Macdonaldtown,Newtown
+Newtown,Stanmore
+Newtown,Ashfield
+Stanmore,Petersham
+Petersham,Lewisham
+Lewisham,Summer Hill
+Summer Hill,Ashfield
+Ashfield,Croydon
+Ashfield,Burwood
+Croydon,Burwood
+Burwood,Strathfield
+Tallawong,Rouse Hill
+Rouse Hill,Kellyville
+Kellyville,Bella Vista
+Bella Vista,Norwest
+Norwest,Hills Showground
+Hills Showground,Castle Hill
+Castle Hill,Cherrybrook
+Cherrybrook,Epping
+Epping,Macquarie University
+Macquarie University,Macquarie Park
+Macquarie Park,North Ryde
+North Ryde,Chatswood
+Strathfield,Homebush
+Homebush,Flemington
+Flemington,Lidcombe
+Lidcombe,Auburn
+Auburn,Clyde
+Clyde,Granville
+Granville,Harris Park
+Harris Park,Parramatta
+Strathfield,Flemington
+Strathfield,Lidcombe
+Auburn,Granville
+Granville,Parramatta
+Strathfield,Parramatta
+Parramatta,Westmead
+Parramatta,Blacktown
+Westmead,Wentworthville
+Westmead,Seven Hills
+Wentworthville,Pendle Hill
+Pendle Hill,Toongabbie
+Toongabbie,Seven Hills
+Seven Hills,Blacktown
+Blacktown,Doonside
+Doonside,Rooty Hill
+Rooty Hill,Mount Druitt
+Mount Druitt,St Mary's
+St Mary's,Werrington
+Werrington,Kingswood
+Kingswood,Penrith
+Penrith,Emu Plains
+Blacktown,Mount Druitt
+Mount Druitt,Penrith
+Blacktown,Penrith
+Blacktown,Marayong
+Marayong,Quakers Hill
+Quakers Hill,Schofields
+Schofields,Riverstone
+Riverstone,Vineyard
+Vineyard,Mulgrave
+Mulgrave,Windsor
+Windsor,Claredon
+Claredon,Richmond
+Wynyard,Circular Quay
+Circular Quay,St James
+St James,Museum
+Museum,Central
+Bondi Junction,Edgecliff
+Edgecliff,Kings Cross
+Kings Cross,Martin Place
+Martin Place,Town Hall
+Redfern,Erskineville
+Erskineville,St Peters
+St Peters,Sydenham
+Redfern,Sydenham
+Redfern,Wolli Creek
+Sydenham,Marrickville
+Marrickville,Dulwich Hill
+Dulwich Hill,Hurlstone Park
+Hurlstone Park,Canterbury
+Canterbury,Campsie
+Campsie,Belmore
+Belmore,Lakemba
+Lakemba,Wiley Park
+Wiley Park,Punchbowl
+Punchbowl,Bankstown
+Marrickville,Campsie
+Sydenham,Campsie
+Campsie,Bankstown
+Cabramatta,Carramar
+Carramar,Villawood
+Villawood,Leightonfield
+Leightonfield,Chester Hill
+Chester Hill,Sefton
+Sefton,Regents Park
+Regents Park,Berala
+Berala,Lidcombe
+Sefton,Birrong
+Birrong,Yagoona
+Yagoona,Bankstown
+Birrong,Regents Park
+Cabramatta,Sefton
+Sefton,Lidcombe
+Sydenham,Tempe
+Tempe,Wolli Creek
+Sydenham,Wolli Creek
+Wolli Creek,Turrella
+Wolli Creek,Kingsgrove
+Wolli Creek,Revesby
+Turrella,Bardwell Park
+Bardwell Park,Bexley North
+Bexley North,Kingsgrove
+Kingsgrove,Beverly Hills
+Kingsgrove,Revesby
+Beverly Hills,Narwee
+Narwee,Riverwood
+Riverwood,Padstow
+Padstow,Revesby
+Revesby,Panania
+Revesby,Glenfield
+Panania,East Hills
+East Hills,Holsworthy
+Holsworthy,Glenfield
+Glenfield,Macquarie Fields
+Macquarie Fields,Ingleburn
+Ingleburn,Minto
+Minto,Leumeah
+Leumeah,Campbelltown
+Campbelltown,Macarthur
+Leppington,Edmondson Park
+Edmondson Park,Glenfield
+Glenfield,Casula
+Casula,Liverpool
+Liverpool,Warwick Farm
+Warwick Farm,Cabramatta
+Cabramatta,Canley Vale
+Canley Vale,Fairfield
+Fairfield,Yennora
+Yennora,Guildford
+Guildford,Merrylands
+Merrylands,Granville
+Merrylands,Harris Park
+Central,Mascot
+Mascot,Green Square
+Green Square,Domestic
+Domestic,International
+International,Wolli Creek
+Central,Domestic
+Wolli Creek,Arncliffe
+Wolli Creek,Rockdale
+Wolli Creek,Kogarah
+Wolli Creek,Hurstville
+Arncliffe,Banksia
+Banksia,Rockdale
+Rockdale,Kogarah
+Kogarah,Carlton
+Kogarah,Hurstville
+Carlton,Allawah
+Allawah,Hurstville
+Hurstville,Penshurst
+Hurstville,Sutherland
+Hurstville,Mortdale
+Penshurst,Mortdale
+Mortdale,Oatley
+Mortdale,Sutherland
+Oatley,Como
+Como,Jannali
+Jannali,Sutherland
+Cronulla,Woolooware
+Woolooware,Caringbah
+Caringbah,Miranda
+Miranda,Gymea
+Gymea,Kirrawee
+Kirrawee,Sutherland
+Miranda,Sutherland
+Sutherland,Loftus
+Sutherland,Waterfall
+Loftus,Engadine
+Engadine,Heathcote
+Heathcote,Waterfall
+Lidcombe,Olympic Park
