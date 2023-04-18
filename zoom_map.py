@@ -221,8 +221,8 @@ class ZoomMap:
             self.warning_print(message)
             self.warning_print("reverting to default extremes of +- 1 units")
         units_north_south = extreme_north-extreme_south #how much distance between north and south in global coordinate frame
-        units_east_west = extreme_west-extreme_east #how much distance between east and west in global coordinate frame
-        start_x = extreme_east + units_east_west*border_fraction_x*0.5#starting x position (west-most) in global coordinates accounting for requested border (half as other half will be on other side)
+        units_east_west = extreme_east-extreme_west #how much distance between east and west in global coordinate frame
+        start_x = extreme_west - units_east_west*border_fraction_x*0.5#starting x position (west-most) in global coordinates accounting for requested border (half as other half will be on other side)
         start_y = extreme_north + units_north_south*border_fraction_y*0.5 #starting x position (north-most) in global coordinates accounting for requested border (half as other half will be on other side)
         units_north_south = (units_north_south)*(1+border_fraction_y) #account for the requested border in the needed length
         units_east_west = (units_east_west)*(1+border_fraction_x) #account for the requested border in the needed length
@@ -257,8 +257,8 @@ class ZoomMap:
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_lines() #get the new extreme positions from the lines
                 extreme_north = max(extreme_north,new_extreme_north)
                 extreme_south = min(extreme_south,new_extreme_south)
-                extreme_east = min(extreme_east,new_extreme_east)
-                extreme_west = max(extreme_west,new_extreme_west)
+                extreme_east = max(extreme_east,new_extreme_east)
+                extreme_west = min(extreme_west,new_extreme_west)
             else: #if extremes not yet found, extremes are the new extremes
                 extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_lines() #get the extreme positions of the lines
                 extremes_defined = True #we have defined extremes which we can compare to
@@ -268,8 +268,8 @@ class ZoomMap:
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_compound_lines() #get the new extreme positions from the compound lines
                 extreme_north = max(extreme_north,new_extreme_north)
                 extreme_south = min(extreme_south,new_extreme_south)
-                extreme_east = min(extreme_east,new_extreme_east)
-                extreme_west = max(extreme_west,new_extreme_west)
+                extreme_east = max(extreme_east,new_extreme_east)
+                extreme_west = min(extreme_west,new_extreme_west)
             else: #if extremes not yet found, extremes are the new extremes
                 extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_compound_lines() #get the extreme positions of the compound lines
                 extremes_defined = True #we have defined extremes which we can compare to
@@ -279,13 +279,17 @@ class ZoomMap:
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_pie_nodes() #get the new extreme positions from the pie_nodes lines
                 extreme_north = max(extreme_north,new_extreme_north)
                 extreme_south = min(extreme_south,new_extreme_south)
-                extreme_east = min(extreme_east,new_extreme_east)
-                extreme_west = max(extreme_west,new_extreme_west)
+                extreme_east = max(extreme_east,new_extreme_east)
+                extreme_west = min(extreme_west,new_extreme_west)
             else: #if extremes not yet found, extremes are the new extremes
                 extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_pie_nodes() #get the extreme positions of the pie_nodes lines
                 extremes_defined = True #we have defined extremes which we can compare to
 
         #return whether we have found extremes and the extremes (or placeholder if we have not found the extremes)
+        print('extreme east ',extreme_east)
+        print('extreme west ',extreme_west)
+        print('extreme north ',extreme_north)
+        print('extreme south ',extreme_south)
         return extremes_defined,extreme_north,extreme_south,extreme_east,extreme_west                
 
     #private tools for operating on nodes
@@ -350,8 +354,8 @@ class ZoomMap:
     def get_extreme_nodes(self):
         extreme_north = max(self.nodes_y_coords) #northernmost node has largest y coordinate
         extreme_south = min(self.nodes_y_coords) #southernmost node has smallest y coordinate
-        extreme_east = min(self.nodes_x_coords) #easternmost point has smallest x coordinate
-        extreme_west = max(self.nodes_x_coords) #westernmost point has largest x coordinate
+        extreme_east = max(self.nodes_x_coords) #easternmost point has smallest x coordinate
+        extreme_west = min(self.nodes_x_coords) #westernmost point has largest x coordinate
         return extreme_north,extreme_south,extreme_east,extreme_west
 
     #calculate node positions in unzoomed pixel coordinates
