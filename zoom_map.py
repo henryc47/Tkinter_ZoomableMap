@@ -8,7 +8,7 @@ import tkinter as tk
 #this class is the zoomable map
 class ZoomMap:
     #create the map
-    def __init__(self,map_width,map_height,window,background="white",zoom_control="<MouseWheel>",drag_start_control='<ButtonPress-1>',drag_end_control="<B1-Motion>",print_warnings=True,scroll_gain=1):
+    def __init__(self,map_width,map_height,window,background="white",zoom_control="<MouseWheel>",drag_start_control='<ButtonPress-1>',drag_end_control="<B1-Motion>",print_warnings=True,scroll_gain=1,zoom_gain=0.01):
         print('foo')
         self.map_width = map_width #width (horizontal length) of the map display in pixels
         self.map_height = map_height #height (vertical length) of the map display in pixels
@@ -17,7 +17,8 @@ class ZoomMap:
         self.window = window #tk object in which the canvas is drawn
         self.background = background #background object, at the moment only supports tk colours
         self.print_warnings = print_warnings #do we print warning and error messages
-        self.scroll_gain = scroll_gain #how fast is panning and zooming
+        self.scroll_gain = scroll_gain #how fast is panning
+        self.zoom_gain = zoom_gain #how fast is zooming
         #create the canvas object
         self.map = tk.Canvas(self.window,bg=self.background,width=self.map_width,height=self.map_height)
         self.map.pack(side = tk.RIGHT)
@@ -46,23 +47,28 @@ class ZoomMap:
             self.map.bind("<B1-Motion>",self.drag_end)
         
         #create containers for objects to be displayed on the map
-        #two types of objects we support at the moment
-        self.init_nodes() #containers to store nodes
-        self.init_lines() #containers to store lines
-        self.init_compound_lines() #containers to store compound lines
-        self.init_pie_nodes() #containers to store pie nodes
+        self.init_objects()
+        
+       
 
     #print a warning if warnings enabled
     def warning_print(self,message):
         if self.print_warnings==True:
             print("WARNING: ",message)
 
-    #containers for displayed objects
-
+    #create empty containers to store displayed objects in
+    def init_objects(self):
+        self.init_nodes() #containers to store nodes
+        self.init_pie_nodes() #containers to store pie nodes
+        self.init_lines() #containers to store lines
+        self.init_compound_lines() #containers to store compound lines
+        
     #create containers to store nodes
     def init_nodes(self):
         #nodes, these are filled circles created using the tk oval object
         self.num_nodes = 0 #number of nodes stored
+        self.node_info_type = 'none' #type of info stored
+        self.node_info_name = 'none' #name of info stored
         #arrays of node properties
         self.nodes_x_coords = [] #horizontal position in global coordinates of the centre of the node
         self.nodes_y_coords = [] #vertical position in global coordinates of the centre of the node
@@ -72,16 +78,45 @@ class ZoomMap:
         self.nodes_y_original = [] #copy of self.nodes_y without zoom applied
         self.nodes_radii = []  #radius of the node, pixels
         self.nodes_colours = [] #colour of the nodes
-        self.nodes_name = [] #name of the each node 
+        self.nodes_name = [] #name of the each node
+        self.nodes_info = [] #additional info about each node 
         self.node_canvas_ids = [] #id of the node object within the canvas
         #flags
         self.nodes_assigned_flag = False #have nodes been stored yet
+
+    #create containers to store pie chart nodes
+    def init_pie_nodes(self):
+        #pie nodes, these are filled circles representing a pie chart, created using tk arc objects
+        self.num_pie_nodes = 0 #number of pie nodes stored
+        self.pie_node_info_type = 'none' #type of info stored
+        self.pie_node_info_name = 'none' #name of info stored
+        self.pie_node_info_subtypes_names = [] #list of all types of info displayed, in order
+        #arrays of pie_node properties
+        self.pie_nodes_x_coords = [] #horizontal position in global coordinates of the centre of the pie node
+        self.pie_nodes_y_coords = [] #vertical position in global coordinates of the centre of the pie node
+        self.pie_nodes_x = [] #horizontal position in pixel coordinates of the centre of the pie node
+        self.pie_nodes_y = [] #vertical position in pixel coordinates of the centre of the pie node
+        self.pie_nodes_x_original = [] #copy of self.pie_nodes_x without zoom applied
+        self.pie_nodes_y_original = [] #copy of self.pie_nodes_y without zoom applied
+        self.pie_nodes_radii = []  #radius of the pie_node, pixels
+        self.pie_nodes_colours = [] #colour of the pie_nodes, list of lists
+        self.pie_nodes_colour_lengths = [] #length of each of the pie_nodes colour section, list of lists
+        self.pie_nodes_name = [] #name of the each node
+        self.pie_node_infos = [] #additional info about each pie_node, list of lists with one subentry for each pie slice 
+        self.pie_node_canvas_ids = [] #id of the arc objects that make up the pie_nodes, as a list of lists
+        #flags
+        self.pie_nodes_assigned_flag = False #have pie nodes been stored yet
 
     #create containers to store lines
     def init_lines(self):
         #lines, these are well, lines
         self.num_lines = 0 #number of lines stored
         #arrays of line properties
+        #relating to nodes
+        self.lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
+        self.lines_start_node_index = [] #index of the starting node, if it exists
+        self.lines_start_node_type = [] #what type of node is at the end of the line (valid are 'none','node' and 'pie')
+        self.lines_start_node_index= [] #index of the ending node, if it exists
         #global coordinate arrays
         self.lines_start_x_coord = [] #horizontal position in global coordinates of the start of the line
         self.lines_start_y_coord = [] #vertical position in global coordinates of the start of the line
@@ -92,29 +127,50 @@ class ZoomMap:
         self.lines_start_y = [] #vertical position in pixel coordinates of the start of the line
         self.lines_end_x = [] #horizontal position in pixel coordinates of the end of the line
         self.lines_end_y = [] #vertical position in pixel coordinates of the end of the line
+        self.lines_midpoint_x = [] #horizontal midpoint in pixel coordinates of the line, used for text display
+        self.lines_midpoint_y = [] #vertical midpoint in pixel coordinates of the line, used for text display
         #copy of pixel coordinate arrays before zoom has been applied
         self.lines_start_x_original = []
         self.lines_start_y_original = []
         self.lines_end_x_original = []
         self.lines_end_y_original = []
+        self.lines_midpoint_x_original = [] 
+        self.lines_midpoint_y_original = []
+        #other line properties 
         self.lines_width = [] #width of the line, pixels
+        self.lines_colour = [] #colour of the line
+        self.lines_canvas_ids = [] #id of the line, so we can delete it later
         #flags
         self.lines_assigned_flag = False #have lines been stored yet
 
     #create containers to store compound lines
     def init_compound_lines(self):
-        #flags
-        self.compound_lines_assigned_flag = False #have lines been stored yet
         self.num_compound_lines = 0 #number of compound lines stored
         #arrays of compound line properties
-        #global coordinate arrays
-
-    #create containers to store pie chart nodes
-    def init_pie_nodes(self):
+        #relating to nodes
+        self.compound_lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
+        self.compound_lines_start_node_index = [] #index of the starting node, if it exists
+        self.compound_lines_start_node_type = [] #what type of node is at the end of the line (valid are 'none','node' and 'pie')
+        self.compound_lines_start_node_index= [] #index of the ending node, if it exists
+        #global coordinate arrays, list of list of line points from start to finsh
+        self.compound_line_points_x_coords = [] #horizontal position of points that make up the line in global coordinates
+        self.compound_line_points_y_coords = [] #vertical position of points that make up the line in global coordinates
+        #pixel coordinate arrays
+        self.compound_line_points_x = [] #horizontal position of points that make up the line in pixel coordinates
+        self.compound_line_points_y = [] #vertical position of points that make up the line in pixel coordinates
+        self.compound_lines_midpoint_x = [] #horizontal midpoint in pixel coordinates of the line, used for text display
+        self.compound_lines_midpoint_y = [] #vertical midpoint in pixel coordinates of the line, used for text display
+        #copy of pixel coordinate arrays before zoom has been applied
+        self.compound_line_points_x_original = []
+        self.compound_line_points_y_original = []
+        self.compound_lines_midpoint_x_original = [] 
+        self.compound_lines_midpoint_y_original = []
+        #other line properties
+        self.compound_lines_width = [] #width of the compound lines, pixels
+        self.compound_lines_colour = [] #colour of the compound line
+        self.lines_canvas_ids = [] #id of the line components, so we can delete it later
         #flags
-        self.pie_nodes_assigned_flag = False #have lines been stored yet
-        self.num_pie_nodes = 0 #number of pie nodes stored
-        
+        self.compound_lines_assigned_flag = False #have lines been stored yet
 
     #private tools to work on these containers, we will later add on a public interface as well, which will be the same but with more checking
     
@@ -218,7 +274,7 @@ class ZoomMap:
                 extreme_north,extreme_south,extreme_east,extreme_west = self.get_extreme_compound_lines() #get the extreme positions of the compound lines
                 extremes_defined = True #we have defined extremes which we can compare to
         #compare with pie nodes if they exist
-        if self.compound_lines_assigned_flag==True: #if we have assigned compound lines
+        if self.pie_nodes_assigned_flag==True: #if we have assigned pie nodes
             if extremes_defined==True: #and we have already measured extremes, compare the extremes and select the most extreme
                 new_extreme_north,new_extreme_south,new_extreme_east,new_extreme_west = self.get_extreme_pie_nodes() #get the new extreme positions from the pie_nodes lines
                 extreme_north = max(extreme_north,new_extreme_north)
@@ -235,16 +291,15 @@ class ZoomMap:
     #private tools for operating on nodes
 
     #create new nodes and replace the existing nodes
-    def create_nodes(self,nodes_x_coords,nodes_y_coords,nodes_radii,nodes_colours,nodes_names):
+    def create_nodes(self,nodes_x_coords,nodes_y_coords,nodes_radii,nodes_colours,nodes_names,info_type='none',info_name='none',nodes_info=[]):
         self.init_nodes() #remove the storage of the existing nodes
         self.num_nodes = len(nodes_x_coords) #get the number of nodes
         self.assign_nodes_positions(nodes_x_coords,nodes_y_coords)  #assign the position of the new nodes
         self.assign_nodes_radii(nodes_radii) #assign the nodes radii
         self.assign_nodes_colours(nodes_colours) #assign the nodes colours
         self.assign_nodes_names(nodes_names) #assign the nodes names
-        self.nodes_assigned_flag = True
-    
-    
+        self.assign_nodes_info(info_type,info_name,nodes_info)
+        self.nodes_assigned_flag = True  
 
     #render the nodes
     def render_nodes(self):
@@ -276,6 +331,20 @@ class ZoomMap:
     #assign the nodes new names
     def assign_nodes_names(self,nodes_names):
         self.nodes_names = nodes_names
+
+    #assign info about the nodes
+    def assign_nodes_info(self,info_type,info_name,nodes_info):
+        #at the moment we only handle blank nodes
+        if info_type=='none':
+            self.assign_nodes_none_info()
+        else:
+            message = 'Node Info Type : ' + info_type + " not yet supported, defaulting to none"
+            self.warning_print(message)
+            self.assign_nodes_none_info()
+
+    def assign_nodes_none_info(self):
+        self.node_info_type='none'
+        self.node_info_tname='none'
 
     #find and return the most extreme coordinates found in the list of nodes
     def get_extreme_nodes(self):
@@ -359,7 +428,18 @@ class ZoomMap:
 
     #zoom the map in/out
     def zoom_map(self,event):
-        pass #placeholder for now
+        mouse_x = event.x #mouse x position
+        mouse_y = event.y #mouse y position
+        zoom_delta = self.zoom_gain*event.delta
+        self.current_zoom = self.current_zoom*(1+zoom_delta) #update the accumulated zoom level
+        self.current_zoom_offset_x = self.current_zoom_offset_x*(1+zoom_delta) - mouse_x*zoom_delta#calculate the new offset for x
+        self.current_zoom_offset_y = self.current_zoom_offset_y*(1+zoom_delta) - mouse_y*zoom_delta#calculate the new offset for y
+        self.apply_correct_zoom(zoom_delta,mouse_x,mouse_y) #perform the zoom on all objects in the map
+        
+
+    #recreate existing objects in the correctly zoomed positions
+    def apply_correct_zoom(self,zoom_delta,mouse_x,mouse_y):
+        pass
 
     #start dragging the map
     def drag_start(self,event):
