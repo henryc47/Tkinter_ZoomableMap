@@ -608,16 +608,6 @@ class ZoomMap:
     def calculate_compound_line_pixel_coordinates(self):
         pass #placeholder
 
-    #private tools for operating on pie nodes
-
-    #find and return the most extreme coordinates found in the list of pie nodes
-    def get_extreme_pie_nodes(self):
-        pass #placeholder
-
-    #calculate pie node positions in unzoomed pixel coordinates
-    def calculate_pie_nodes_pixel_coordinates(self):
-        pass #placeholder
-
     #tools to control overall movement of the map
 
     #zoom the map in/out
