@@ -383,6 +383,8 @@ class ZoomMap:
         self.lines_start_y_coord = [] #vertical position in global coordinates of the start of the line
         self.lines_end_x_coord = [] #horizontal position in global coordinates of the end of the line
         self.lines_end_y_coord = [] #vertical position in global coordinates of the end of the line
+        self.lines_midpoint_x_coord = [] #horizontal midpoint in global coordinates of the line, used for text display
+        self.lines_midpoint_y_coord = [] #vertical midpoint in global coordinates of the line, used for text display
         #pixel coordinate arrays
         self.lines_start_x = [] #horizontal position in pixel coordinates of the start of the line
         self.lines_start_y = [] #vertical position in pixel coordinates of the start of the line
@@ -416,8 +418,9 @@ class ZoomMap:
         self.assign_lines_width(lines_width) #assign width of all lines
         self.assign_lines_colour(lines_colour) #assign colour of all lines
         self.assign_lines_names(lines_name) #assign name to the lines
-        self.assign_lines_info(info_name,info_type,lines_info)
-        self.assign_lines_nodes_and_positions(lines_start_node_type,lines_start_node_index,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord,lines_end_x_coord,lines_end_y_coord)
+        self.assign_lines_info(info_name,info_type,lines_info) #assign info to lines
+        self.assign_lines_nodes_and_positions(lines_start_node_type,lines_start_node_index,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord,lines_end_x_coord,lines_end_y_coord) #determine the position of the start and end of the line
+        self.calculate_lines_midpoint() #calculate the midpoint of the line
 
     #assign the width of all the lines
     def assign_lines_width(self,lines_width):
@@ -451,6 +454,13 @@ class ZoomMap:
         #empty list for node type indicates we are not using node types, all lines are generated from explicit positions (note this selection can be made independently for starting and ending nodes)
         self.lines_start_x_coord,self.lines_start_y_coord,self.lines_start_node_type,self.lines_start_node_index = self.extract_position_nodes_for_lines(self,lines_start_node_type,lines_start_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord) #assign nodes and positions for start of line
         self.lines_end_x_coord,self.lines_end_y_coord,self.lines_end_node_type,self.lines_end_node_index = self.extract_position_nodes_for_lines(self,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_end_x_coord,lines_end_y_coord) #assign nodes and positions for end of line
+
+    #calculate the midpoint of lines in global coordinates
+    def calculate_lines_midpoint(self):
+        for i in range(self.num_lines):
+            self.lines_midpoint_x_coord[i] = (self.lines_start_x_coord[i]+self.lines_end_x_coord[i])/2
+            self.lines_midpoint_y_coord[i] = (self.lines_start_y_coord[i]+self.lines_end_y_coord[i])/2
+
 
     #extract the position and nodes of lines
     def extract_position_nodes_for_lines(self,node_type,node_index,line_coords_prefer,lines_x_coord,lines_y_coord):
@@ -542,16 +552,21 @@ class ZoomMap:
         for i in range(self.num_lines): #go through each line
             line_start_x,line_start_y = self.convert_coords_to_pixels(self.lines_start_x_coord[i],self.lines_start_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line start
             line_end_x,line_end_y = self.convert_coords_to_pixels(self.lines_end_x_coord[i],self.lines_end_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line end
+            line_midpoint_x,line_midpoint_y = self.convert_coords_to_pixels(self.lines_midpoint_x_coord[i],self.lines_midpoint_y_coord[i]) #calculate the position in unzoomed pixel coordinates of the line midpoint
             #append this info to the existing coordinate lists
             self.lines_start_x.append(line_start_x)
             self.lines_start_y.append(line_start_y)
             self.lines_end_x.append(line_end_x)
-            self.lines_end_y.append(line_end_y)      
+            self.lines_end_y.append(line_end_y)
+            self.lines_midpoint_x.append(line_midpoint_x)
+            self.lines_midpoint_y.append(line_midpoint_y)      
         #create a copy of these positions to store positions before zoom is applied
         self.lines_start_x_original = self.lines_start_x
         self.lines_start_y_original = self.lines_start_y
         self.lines_end_x_original = self.lines_end_x
         self.lines_end_y_original = self.lines_end_y
+        self.lines_midpoint_x_original = self.lines_midpoint_x
+        self.lines_midpoint_y_original = self.lines_midpoint_y
 
     #private tools for operating on compound lines
 
