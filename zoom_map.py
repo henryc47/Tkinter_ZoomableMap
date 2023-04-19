@@ -403,6 +403,7 @@ class ZoomMap:
         self.lines_width = [] #width of the line, pixels
         self.lines_colour = [] #colour of the line
         self.lines_name = [] #name of all the lines
+        self.lines_info = [] #info about all the lines
         self.lines_canvas_ids = [] #id of the line, so we can delete it later
         #flags
         self.lines_assigned_flag = False #have lines been stored yet
@@ -461,7 +462,6 @@ class ZoomMap:
             self.lines_midpoint_x_coord[i] = (self.lines_start_x_coord[i]+self.lines_end_x_coord[i])/2
             self.lines_midpoint_y_coord[i] = (self.lines_start_y_coord[i]+self.lines_end_y_coord[i])/2
 
-
     #extract the position and nodes of lines
     def extract_position_nodes_for_lines(self,node_type,node_index,line_coords_prefer,lines_x_coord,lines_y_coord):
         if len(node_type)==0 and len(lines_x_coord)>0: #we are not using nodes for any positions     
@@ -513,6 +513,7 @@ class ZoomMap:
         return list_x_coord,list_y_coord,list_node_type,list_node_index
 
     #extract x/y global position from a created node
+    #currently supports nodes and pie nodes
     def extract_node_position(self,node_type,node_index):
         if node_type=='node':
             x = self.nodes_x_coords[node_index]
@@ -547,7 +548,6 @@ class ZoomMap:
         return extreme_north,extreme_south,extreme_east,extreme_west
 
     #calculate line positions in unzoomed pixel coordinates
-    #currently supports nodes and pie nodes
     def calculate_line_pixel_coordinates(self):      
         for i in range(self.num_lines): #go through each line
             line_start_x,line_start_y = self.convert_coords_to_pixels(self.lines_start_x_coord[i],self.lines_start_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line start
@@ -574,6 +574,8 @@ class ZoomMap:
     #create containers to store compound lines
     def init_compound_lines(self):
         self.num_compound_lines = 0 #number of compound lines stored
+        self.compound_line_info_name = 'none' #name of the info stored with the compound lines
+        self.compound_line_info_type = 'none' #type of the info stored with the compound lines
         #arrays of compound line properties
         #relating to nodes
         self.compound_lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
@@ -596,11 +598,62 @@ class ZoomMap:
         #other line properties
         self.compound_lines_width = [] #width of the compound lines, pixels
         self.compound_lines_colour = [] #colour of the compound line
+        self.compound_lines_info = [] #info about the compound lines
         self.lines_canvas_ids = [] #id of the line components, so we can delete it later
         #flags
         self.compound_lines_assigned_flag = False #have lines been stored yet
 
+    #render the compound lines PLACEHOLDER
+    def render_compound_lines(self):
+        pass
+    
+    #create new compound lines and replace the existing compound lines #note this must be done after node creation if using nodes to define line start/end points 
+    def create_compound_lines(self,compound_lines_width,compound_lines_colour,compound_lines_name,info_name,info_type,compound_lines_info):
+        self.init_compound_lines() #reset line storage, removing all existing lines
+        self.num_compound_lines = len(compound_lines_width) #number of compound lines
+        self.assign_compound_lines_width(compound_lines_width) #assign width of all compound lines
+        self.assign_compound_lines_colour(compound_lines_colour) #assign colour of all compound lines
+        self.assign_compound_lines_names(compound_lines_name) #assign name to the compound lines
+        self.assign_compound_lines_info(info_name,info_type,compound_lines_info) #assign info to compound lines
+        self.assign_compound_lines_nodes_and_positions() #determine the position of the start and end of the compound line
+        self.calculate_compound_lines_midpoint() #calculate the midpoint of the compound line
 
+    #assign the width of all the lines
+    def assign_compound_lines_width(self,lines_width):
+        self.compound_lines_width = lines_width
+
+    #assign the colour of all the compound lines
+    def assign_compound_lines_colour(self,lines_colour):
+        self.compound_lines_colour = lines_colour
+
+    #assign the name of all the compound lines
+    def assign_compound_lines_names(self,lines_name):
+        self.compound_lines_name = lines_name
+
+    #assign info to the compound lines
+    def assign_compound_lines_info(self,info_name,info_type,lines_info):
+        #at the moment we only handle no node info
+        if info_type=='none':
+            self.assign_lines_none_info()
+        else:
+            message = 'Lines Info Type : ' + info_type + " not yet supported, defaulting to none"
+            self.warning_print(message)
+            self.assign_lines_none_info()
+
+    #assign no info to the compound lines
+    def assign_compound_lines_none_info(self):
+        self.compound_line_info_type='none'
+        self.compound_line_info_name='none'
+
+    #assign nodes and positions to determine the start and end of compound lines
+    def assign_compound_lines_nodes_and_positions(self):
+        pass  #placeholder
+
+    #calculate the midpoint of compound lines in global coordinates
+    def calculate_compound_lines_midpoint(self):
+        pass #placeholder
+
+    #get extreme positions from compound lines
     def get_extreme_compound_lines(self):
         pass #placeholder
 
