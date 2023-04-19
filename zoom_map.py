@@ -62,116 +62,7 @@ class ZoomMap:
         self.init_pie_nodes() #containers to store pie nodes
         self.init_lines() #containers to store lines
         self.init_compound_lines() #containers to store compound lines
-        
-    #create containers to store nodes
-    def init_nodes(self):
-        #nodes, these are filled circles created using the tk oval object
-        self.num_nodes = 0 #number of nodes stored
-        self.node_info_type = 'none' #type of info stored
-        self.node_info_name = 'none' #name of info stored
-        #arrays of node properties
-        self.nodes_x_coords = [] #horizontal position in global coordinates of the centre of the node
-        self.nodes_y_coords = [] #vertical position in global coordinates of the centre of the node
-        self.nodes_x = [] #horizontal position in pixel coordinates of the centre of the node
-        self.nodes_y = [] #vertical position in pixel coordinates of the centre of the node
-        self.nodes_x_original = [] #copy of self.nodes_x without zoom applied
-        self.nodes_y_original = [] #copy of self.nodes_y without zoom applied
-        self.nodes_radii = []  #radius of the node, pixels
-        self.nodes_colours = [] #colour of the nodes
-        self.nodes_name = [] #name of the each node
-        self.nodes_info = [] #additional info about each node 
-        self.node_canvas_ids = [] #id of the node object within the canvas
-        #flags
-        self.nodes_assigned_flag = False #have nodes been stored yet
-
-    #create containers to store pie chart nodes
-    def init_pie_nodes(self):
-        #pie nodes, these are filled circles representing a pie chart, created using tk arc objects
-        self.num_pie_nodes = 0 #number of pie nodes stored
-        self.pie_node_info_type = 'none' #type of info stored
-        self.pie_node_info_name = 'none' #name of info stored
-        self.pie_node_info_subtypes_names = [] #list of all types of info displayed, in order
-        #arrays of pie_node properties
-        self.pie_nodes_x_coords = [] #horizontal position in global coordinates of the centre of the pie node
-        self.pie_nodes_y_coords = [] #vertical position in global coordinates of the centre of the pie node
-        self.pie_nodes_x = [] #horizontal position in pixel coordinates of the centre of the pie node
-        self.pie_nodes_y = [] #vertical position in pixel coordinates of the centre of the pie node
-        self.pie_nodes_x_original = [] #copy of self.pie_nodes_x without zoom applied
-        self.pie_nodes_y_original = [] #copy of self.pie_nodes_y without zoom applied
-        self.pie_nodes_radii = []  #radius of the pie_node, pixels
-        self.pie_nodes_colours = [] #colour of the pie_nodes, list of lists
-        self.pie_nodes_colour_lengths = [] #length of each of the pie_nodes colour section, list of lists
-        self.pie_nodes_name = [] #name of the each node
-        self.pie_node_infos = [] #additional info about each pie_node, list of lists with one subentry for each pie slice 
-        self.pie_node_canvas_ids = [] #id of the arc objects that make up the pie_nodes, as a list of lists
-        #flags
-        self.pie_nodes_assigned_flag = False #have pie nodes been stored yet
-
-    #create containers to store lines
-    def init_lines(self):
-        #lines, these are well, lines
-        self.num_lines = 0 #number of lines stored
-        #arrays of line properties
-        #relating to nodes
-        self.lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
-        self.lines_start_node_index = [] #index of the starting node, if it exists
-        self.lines_start_node_type = [] #what type of node is at the end of the line (valid are 'none','node' and 'pie')
-        self.lines_start_node_index= [] #index of the ending node, if it exists
-        #global coordinate arrays
-        self.lines_start_x_coord = [] #horizontal position in global coordinates of the start of the line
-        self.lines_start_y_coord = [] #vertical position in global coordinates of the start of the line
-        self.lines_end_x_coord = [] #horizontal position in global coordinates of the end of the line
-        self.lines_end_y_coord = [] #vertical position in global coordinates of the end of the line
-        #pixel coordinate arrays
-        self.lines_start_x = [] #horizontal position in pixel coordinates of the start of the line
-        self.lines_start_y = [] #vertical position in pixel coordinates of the start of the line
-        self.lines_end_x = [] #horizontal position in pixel coordinates of the end of the line
-        self.lines_end_y = [] #vertical position in pixel coordinates of the end of the line
-        self.lines_midpoint_x = [] #horizontal midpoint in pixel coordinates of the line, used for text display
-        self.lines_midpoint_y = [] #vertical midpoint in pixel coordinates of the line, used for text display
-        #copy of pixel coordinate arrays before zoom has been applied
-        self.lines_start_x_original = []
-        self.lines_start_y_original = []
-        self.lines_end_x_original = []
-        self.lines_end_y_original = []
-        self.lines_midpoint_x_original = [] 
-        self.lines_midpoint_y_original = []
-        #other line properties 
-        self.lines_width = [] #width of the line, pixels
-        self.lines_colour = [] #colour of the line
-        self.lines_canvas_ids = [] #id of the line, so we can delete it later
-        #flags
-        self.lines_assigned_flag = False #have lines been stored yet
-
-    #create containers to store compound lines
-    def init_compound_lines(self):
-        self.num_compound_lines = 0 #number of compound lines stored
-        #arrays of compound line properties
-        #relating to nodes
-        self.compound_lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
-        self.compound_lines_start_node_index = [] #index of the starting node, if it exists
-        self.compound_lines_start_node_type = [] #what type of node is at the end of the line (valid are 'none','node' and 'pie')
-        self.compound_lines_start_node_index= [] #index of the ending node, if it exists
-        #global coordinate arrays, list of list of line points from start to finsh
-        self.compound_line_points_x_coords = [] #horizontal position of points that make up the line in global coordinates
-        self.compound_line_points_y_coords = [] #vertical position of points that make up the line in global coordinates
-        #pixel coordinate arrays
-        self.compound_line_points_x = [] #horizontal position of points that make up the line in pixel coordinates
-        self.compound_line_points_y = [] #vertical position of points that make up the line in pixel coordinates
-        self.compound_lines_midpoint_x = [] #horizontal midpoint in pixel coordinates of the line, used for text display
-        self.compound_lines_midpoint_y = [] #vertical midpoint in pixel coordinates of the line, used for text display
-        #copy of pixel coordinate arrays before zoom has been applied
-        self.compound_line_points_x_original = []
-        self.compound_line_points_y_original = []
-        self.compound_lines_midpoint_x_original = [] 
-        self.compound_lines_midpoint_y_original = []
-        #other line properties
-        self.compound_lines_width = [] #width of the compound lines, pixels
-        self.compound_lines_colour = [] #colour of the compound line
-        self.lines_canvas_ids = [] #id of the line components, so we can delete it later
-        #flags
-        self.compound_lines_assigned_flag = False #have lines been stored yet
-
+    
     #private tools to work on these containers, we will later add on a public interface as well, which will be the same but with more checking
     
     #after objects has been assigned, determine correct scale
@@ -293,17 +184,26 @@ class ZoomMap:
         return extremes_defined,extreme_north,extreme_south,extreme_east,extreme_west                
 
     #private tools for operating on nodes
-
-    #create new nodes and replace the existing nodes
-    def create_nodes(self,nodes_x_coords,nodes_y_coords,nodes_radii,nodes_colours,nodes_names,info_type='none',info_name='none',nodes_info=[]):
-        self.init_nodes() #remove the storage of the existing nodes
-        self.num_nodes = len(nodes_x_coords) #get the number of nodes
-        self.assign_nodes_positions(nodes_x_coords,nodes_y_coords)  #assign the position of the new nodes
-        self.assign_nodes_radii(nodes_radii) #assign the nodes radii
-        self.assign_nodes_colours(nodes_colours) #assign the nodes colours
-        self.assign_nodes_names(nodes_names) #assign the nodes names
-        self.assign_nodes_info(info_type,info_name,nodes_info)
-        self.nodes_assigned_flag = True  
+    #create containers to store nodes
+    def init_nodes(self):
+        #nodes, these are filled circles created using the tk oval object
+        self.num_nodes = 0 #number of nodes stored
+        self.node_info_type = 'none' #type of info stored
+        self.node_info_name = 'none' #name of info stored
+        #arrays of node properties
+        self.nodes_x_coords = [] #horizontal position in global coordinates of the centre of the node
+        self.nodes_y_coords = [] #vertical position in global coordinates of the centre of the node
+        self.nodes_x = [] #horizontal position in pixel coordinates of the centre of the node
+        self.nodes_y = [] #vertical position in pixel coordinates of the centre of the node
+        self.nodes_x_original = [] #copy of self.nodes_x without zoom applied
+        self.nodes_y_original = [] #copy of self.nodes_y without zoom applied
+        self.nodes_radii = []  #radius of the node, pixels
+        self.nodes_colours = [] #colour of the nodes
+        self.nodes_name = [] #name of the each node
+        self.nodes_info = [] #additional info about each node 
+        self.node_canvas_ids = [] #id of the node object within the canvas
+        #flags
+        self.nodes_assigned_flag = False #have nodes been stored yet
 
     #render the nodes
     def render_nodes(self):
@@ -317,8 +217,18 @@ class ZoomMap:
                 self.map.delete(self.node_canvas_ids[i])
             id = self.map.create_oval(x-radius,y-radius,x+radius,y+radius,fill=colour) #draw a circle to represent the node
             self.node_canvas_ids[i] = id #store the id so we can delete the object later
-            
 
+    #create new nodes and replace the existing nodes
+    def create_nodes(self,nodes_x_coords,nodes_y_coords,nodes_radii,nodes_colours,nodes_names,info_type='none',info_name='none',nodes_info=[]):
+        self.init_nodes() #remove the storage of the existing nodes
+        self.num_nodes = len(nodes_x_coords) #get the number of nodes
+        self.assign_nodes_positions(nodes_x_coords,nodes_y_coords)  #assign the position of the new nodes
+        self.assign_nodes_radii(nodes_radii) #assign the nodes radii
+        self.assign_nodes_colours(nodes_colours) #assign the nodes colours
+        self.assign_nodes_names(nodes_names) #assign the nodes names
+        self.assign_nodes_info(info_type,info_name,nodes_info) #assign info the nodes
+        self.nodes_assigned_flag = True  
+            
     #assign the nodes new x/y coordinates in the global coordinate frame
     def assign_nodes_positions(self,nodes_x_coords,nodes_y_coords):
         self.nodes_x_coords = nodes_x_coords
@@ -338,7 +248,7 @@ class ZoomMap:
 
     #assign info about the nodes
     def assign_nodes_info(self,info_type,info_name,nodes_info):
-        #at the moment we only handle blank nodes
+        #at the moment we only handle no node info
         if info_type=='none':
             self.assign_nodes_none_info()
         else:
@@ -348,7 +258,7 @@ class ZoomMap:
 
     def assign_nodes_none_info(self):
         self.node_info_type='none'
-        self.node_info_tname='none'
+        self.node_info_name='none'
 
     #find and return the most extreme coordinates found in the list of nodes
     def get_extreme_nodes(self):
@@ -370,7 +280,242 @@ class ZoomMap:
         self.nodes_y_original = self.nodes_y    
         self.node_canvas_ids = ['blank']*self.num_nodes #canvas ids for the nodes themsleves
     
+    #private tools for operating on pie_nodes
+    
+    #create containers to store pie chart nodes
+    def init_pie_nodes(self):
+        #pie nodes, these are filled circles representing a pie chart, created using tk arc objects
+        self.num_pie_nodes = 0 #number of pie nodes stored
+        self.pie_node_info_type = 'none' #type of info stored
+        self.pie_node_info_name = 'none' #name of info stored
+        self.pie_node_info_subtypes_names = [] #list of all types of info displayed, in order
+        #arrays of pie_node properties
+        self.pie_nodes_x_coords = [] #horizontal position in global coordinates of the centre of the pie node
+        self.pie_nodes_y_coords = [] #vertical position in global coordinates of the centre of the pie node
+        self.pie_nodes_x = [] #horizontal position in pixel coordinates of the centre of the pie node
+        self.pie_nodes_y = [] #vertical position in pixel coordinates of the centre of the pie node
+        self.pie_nodes_x_original = [] #copy of self.pie_nodes_x without zoom applied
+        self.pie_nodes_y_original = [] #copy of self.pie_nodes_y without zoom applied
+        self.pie_nodes_radii = []  #radius of the pie_node, pixels
+        self.pie_nodes_colours = [] #colour of the pie_nodes, list of lists
+        self.pie_nodes_colour_lengths = [] #length of each of the pie_nodes colour section, list of lists
+        self.pie_nodes_name = [] #name of the each node
+        self.pie_node_infos = [] #additional info about each pie_node, list of lists with one subentry for each pie slice 
+        self.pie_node_canvas_ids = [] #id of the arc objects that make up the pie_nodes, as a list of lists
+        #flags
+        self.pie_nodes_assigned_flag = False #have pie nodes been stored yet
+
+    #render the pie nodes PLACEHOLDER
+    def render_pie_nodes(self):
+        pass
+
+    #create new pie nodes and replace the existing pie nodes
+    def create_pie_nodes(self,pie_nodes_x_coords,pie_nodes_y_coords,pie_nodes_radii,pie_nodes_colours,pie_nodes_colours_lengths,pie_nodes_names,info_type='none',info_name='none',info_subtype_names=[],pie_nodes_infos=[]):
+        self.init_pie_nodes() #remove the storage of the existing nodes
+        self.num_pie_nodes = len(pie_nodes_x_coords) #get the number of pie nodes
+        self.assign_pie_nodes_positions(pie_nodes_x_coords,pie_nodes_y_coords)  #assign the position of the new pie nodes
+        self.assign_pie_nodes_radii(pie_nodes_radii) #assign the pie nodes radii
+        self.assign_pie_nodes_colours(pie_nodes_colours) #assign the pie nodes colours
+        self.assign_pie_nodes_colours_lengths(pie_nodes_colours_lengths) #assign the length of each colour segments
+        self.assign_pie_nodes_names(pie_nodes_names) #assign the pie nodes names
+        self.assign_pie_nodes_info(info_type,info_name,info_subtype_names,pie_nodes_infos) #assign info to the pie nodes
+        self.pie_nodes_assigned_flag = True  
+
+    #assign the pie nodes new x/y coordinates in the global coordinate frame
+    def assign_pie_nodes_positions(self,pie_nodes_x_coords,pie_nodes_y_coords):
+        self.pie_nodes_x_coords = pie_nodes_x_coords
+        self.pie_nodes_y_coords = pie_nodes_y_coords
+
+    #assign the pie nodes new radii
+    def assign_pie_nodes_radii(self,pie_nodes_radii):
+        self.pie_nodes_radii = pie_nodes_radii
+
+    #assign the pie nodes new colours
+    def assign_pie_nodes_colours(self,pie_nodes_colours):
+        self.pie_nodes_colours = pie_nodes_colours
+
+    #assign the length of the colour segment of each pie node
+    def assign_pie_nodes_colours(self,pie_nodes_colours_lengths):
+        self.pie_nodes_colours_lengths = pie_nodes_colours_lengths
+
+    #assign the nodes new names
+    def assign_pie_nodes_names(self,pie_nodes_names):
+        self.pie_nodes_names = pie_nodes_names
+
+    #assign info about the nodes
+    def assign_pie_nodes_info(self,info_type,info_name,info_subtype_names,pie_nodes_info):
+        #at the moment we only handle blank nodes
+        if info_type=='none':
+            self.assign_pie_nodes_none_info()
+        else:
+            message = 'Pie Node Info Type : ' + info_type + " not yet supported, defaulting to none"
+            self.warning_print(message)
+            self.assign_pie_nodes_none_info()
+
+    def assign_pie_nodes_none_info(self):
+        self.pie_node_info_type='none'
+        self.pie_node_info_name='none'
+
+    #find and return the most extreme coordinates found in the list of nodes
+    def get_extreme_pie_nodes(self):
+        extreme_north = max(self.pie_nodes_y_coords) #northernmost node has largest y coordinate
+        extreme_south = min(self.pie_nodes_y_coords) #southernmost node has smallest y coordinate
+        extreme_east = max(self.pie_nodes_x_coords) #easternmost point has smallest x coordinate
+        extreme_west = min(self.pie_nodes_x_coords) #westernmost point has largest x coordinate
+        return extreme_north,extreme_south,extreme_east,extreme_west
+
     #private tools for operating on lines
+
+    #create containers to store lines
+    def init_lines(self):
+        #lines, these are well, lines
+        self.num_lines = 0 #number of lines stored
+        self.line_info_name = 'none' #name of the info stored with the lines
+        self.line_info_type = 'none' #type of the info stored with the lines
+        #arrays of line properties
+        #relating to nodes
+        self.lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
+        self.lines_start_node_index = [] #index of the starting node, if it exists
+        self.lines_start_node_type = [] #what type of node is at the end of the line (valid are 'none','node' and 'pie')
+        self.lines_start_node_index= [] #index of the ending node, if it exists
+        #global coordinate arrays
+        self.lines_start_x_coord = [] #horizontal position in global coordinates of the start of the line
+        self.lines_start_y_coord = [] #vertical position in global coordinates of the start of the line
+        self.lines_end_x_coord = [] #horizontal position in global coordinates of the end of the line
+        self.lines_end_y_coord = [] #vertical position in global coordinates of the end of the line
+        #pixel coordinate arrays
+        self.lines_start_x = [] #horizontal position in pixel coordinates of the start of the line
+        self.lines_start_y = [] #vertical position in pixel coordinates of the start of the line
+        self.lines_end_x = [] #horizontal position in pixel coordinates of the end of the line
+        self.lines_end_y = [] #vertical position in pixel coordinates of the end of the line
+        self.lines_midpoint_x = [] #horizontal midpoint in pixel coordinates of the line, used for text display
+        self.lines_midpoint_y = [] #vertical midpoint in pixel coordinates of the line, used for text display
+        #copy of pixel coordinate arrays before zoom has been applied
+        self.lines_start_x_original = []
+        self.lines_start_y_original = []
+        self.lines_end_x_original = []
+        self.lines_end_y_original = []
+        self.lines_midpoint_x_original = [] 
+        self.lines_midpoint_y_original = []
+        #other line properties 
+        self.lines_width = [] #width of the line, pixels
+        self.lines_colour = [] #colour of the line
+        self.lines_name = [] #name of all the lines
+        self.lines_canvas_ids = [] #id of the line, so we can delete it later
+        #flags
+        self.lines_assigned_flag = False #have lines been stored yet
+
+    #render the lines PLACEHOLDER
+    def render_lines(self):
+        pass
+    
+    #create new lines and replace the existing lines #note this must be done after node creation if using nodes to define line start/end points 
+    def create_lines(self,lines_width,lines_colour,lines_name,info_name,info_type,lines_info,lines_start_node_type='none',lines_start_node_index=-1,lines_end_node_type='none',lines_end_node_index=-1,line_coords_prefer=False,lines_start_x_coord=0,lines_start_y_coord=0,lines_end_x_coord=0,lines_end_y_coord=0):
+        self.init_lines() #reset line storage, removing all existing lines
+        self.num_lines = len(lines_width) #number of lines
+        self.assign_lines_width(lines_width) #assign width of all lines
+        self.assign_lines_colour(lines_colour) #assign colour of all lines
+        self.assign_lines_names(lines_name) #assign name to the lines
+        self.assign_lines_info(info_name,info_type,lines_info)
+        self.assign_lines_nodes_and_positions(lines_start_node_type,lines_start_node_index,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord,lines_end_x_coord,lines_end_y_coord)
+
+    #assign the width of all the lines
+    def assign_lines_width(self,lines_width):
+        self.lines_width = lines_width
+
+    #assign the colour of all the lines
+    def assign_lines_colour(self,lines_colour):
+        self.lines_colour = lines_colour
+
+    #assign the name of all the lines
+    def assign_lines_names(self,lines_name):
+        self.lines_name = lines_name
+
+    #assign info to the lines
+    def assign_lines_info(self,info_name,info_type,lines_info):
+        #at the moment we only handle no node info
+        if info_type=='none':
+            self.assign_lines_none_info()
+        else:
+            message = 'Lines Info Type : ' + info_type + " not yet supported, defaulting to none"
+            self.warning_print(message)
+            self.assign_lines_none_info()
+
+    #assign no info to the lines
+    def assign_lines_none_info(self):
+        self.line_info_type='none'
+        self.line_info_name='none'
+
+    #assign nodes and positions to determine the start and end of lines
+    def assign_lines_nodes_and_positions(self,lines_start_node_type=[],lines_start_node_index=-1,lines_end_node_type=[],lines_end_node_index=-1,line_coords_prefer=False,lines_start_x_coord=[],lines_start_y_coord=[],lines_end_x_coord=[],lines_end_y_coord=[]):
+        #empty list for node type indicates we are not using node types, all lines are generated from explicit positions (note this selection can be made independently for starting and ending nodes)
+        self.lines_start_x_coord,self.lines_start_y_coord,self.lines_start_node_type,self.lines_start_node_index = self.extract_position_nodes_for_lines(self,lines_start_node_type,lines_start_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord) #assign nodes and positions for start of line
+        self.lines_end_x_coord,self.lines_end_y_coord,self.lines_end_node_type,self.lines_end_node_index = self.extract_position_nodes_for_lines(self,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_end_x_coord,lines_end_y_coord) #assign nodes and positions for end of line
+
+    #extract the position and nodes of lines
+    def extract_position_nodes_for_lines(self,node_type,node_index,line_coords_prefer,lines_x_coord,lines_y_coord):
+        if len(node_type)==0 and len(lines_x_coord)>0: #we are not using nodes for any positions     
+            list_x_coord = lines_x_coord #we use this as is in this mode
+            list_y_coord = lines_y_coord
+            list_node_type = ['none']*self.num_lines #we are not using node for position
+            list_node_index = [-1]*self.num_lines #placeholder for node index
+        else:
+            list_x_coord = [] #we must assign to this from each node in this mode
+            list_y_coord = []
+            list_node_index = node_index #we can use this as is
+            list_node_type = node_type
+            if len(node_type)>0 and len(lines_x_coord)==0: #we are not using explicit positions, only nodes provided
+                for i in range(self.num_lines): #go through all the lines
+                    new_x,new_y = self.extract_node_position(node_type[i],node_index[i]) #extract the x and y position of the requested node
+                    list_x_coord.append(new_x) #and append these positions to the list of positions
+                    list_y_coord.append(new_y)
+            elif len(node_type)>0 and len(lines_x_coord)==0: #we have access to both nodes and positions (though potentially not all might be nodes)
+                for i in range(self.num_lines): #go through all the lines
+                    if node_type[i]=='none':
+                        #we don't have a node, so use provided coordinates
+                        list_x_coord.append(lines_x_coord[i])
+                        list_y_coord.append(lines_y_coord[i])
+                    else: #if we do have a node
+                        #check if we have a non-blank position
+                        if lines_x_coord=='none': #if there is no coordinate for this position
+                            #we must use the node
+                            new_x,new_y = self.extract_node_position(node_type[i],node_index[i]) #extract the x and y position of the requested node
+                            list_x_coord.append(new_x)
+                            list_y_coord.append(new_y)
+                        else: #if we have both a coordinate and a node
+                            if line_coords_prefer==True: #we will use the coordinates if possible
+                                list_x_coord.append(lines_x_coord[i])
+                                list_y_coord.append(lines_y_coord[i])
+                            elif line_coords_prefer==False: #we will use nodes if possible
+                                new_x,new_y = self.extract_node_position(node_type[i],node_index[i]) #extract the x and y position of the requested node
+                                list_x_coord.append(new_x)
+                                list_y_coord.append(new_y)
+
+            else:
+                message = "You must either define the nodes to make up the lines or the coordinates for the lines themsleves \n returning blank data as default"
+                self.warning_print(message)
+                list_x_coord = []
+                list_y_coord = []
+                list_node_index = []
+                list_node_type = []
+
+        #return the position and linked nodes of the lines
+        return list_x_coord,list_y_coord,list_node_type,list_node_index
+
+    #extract x/y global position from a created node
+    def extract_node_position(self,node_type,node_index):
+        if node_type=='node':
+            x = self.nodes_x_coords[node_index]
+            y = self.nodes_y_coords[node_index]
+        elif node_type=='pie_node':
+            x = self.pie_nodes_x_coords[node_index]
+            y = self.pie_nodes_y_coords[node_index]
+        else:
+            message = "Node Type : " + node_type + " Not a supported node type for position extraction, valid types are 'node' and 'pie_node' \n Returning default position of 0/0"  
+            self.warning_print(message)
+            x = 0
+            y = 0
+        return x,y
 
     #find and return the most extreme coordinates found in the list of lines
     def get_extreme_lines(self):
@@ -391,8 +536,8 @@ class ZoomMap:
         extreme_west = max(extreme_west_end,extreme_west_start)
         return extreme_north,extreme_south,extreme_east,extreme_west
 
-
     #calculate line positions in unzoomed pixel coordinates
+    #currently supports nodes and pie nodes
     def calculate_line_pixel_coordinates(self):      
         for i in range(self.num_lines): #go through each line
             line_start_x,line_start_y = self.convert_coords_to_pixels(self.lines_start_x_coord[i],self.lines_start_y_coord[i])  #calculate the position in unzoomed pixel coordinates of line start
@@ -411,6 +556,36 @@ class ZoomMap:
     #private tools for operating on compound lines
 
     #find and return the most extreme coordinates found in the list of compound lines
+    #create containers to store compound lines
+    def init_compound_lines(self):
+        self.num_compound_lines = 0 #number of compound lines stored
+        #arrays of compound line properties
+        #relating to nodes
+        self.compound_lines_start_node_type = [] #what type of node is at the start of the line (valid are 'none','node' and 'pie')
+        self.compound_lines_start_node_index = [] #index of the starting node, if it exists
+        self.compound_lines_start_node_type = [] #what type of node is at the end of the line (valid are 'none','node' and 'pie')
+        self.compound_lines_start_node_index= [] #index of the ending node, if it exists
+        #global coordinate arrays, list of list of line points from start to finsh
+        self.compound_line_points_x_coords = [] #horizontal position of points that make up the line in global coordinates
+        self.compound_line_points_y_coords = [] #vertical position of points that make up the line in global coordinates
+        #pixel coordinate arrays
+        self.compound_line_points_x = [] #horizontal position of points that make up the line in pixel coordinates
+        self.compound_line_points_y = [] #vertical position of points that make up the line in pixel coordinates
+        self.compound_lines_midpoint_x = [] #horizontal midpoint in pixel coordinates of the line, used for text display
+        self.compound_lines_midpoint_y = [] #vertical midpoint in pixel coordinates of the line, used for text display
+        #copy of pixel coordinate arrays before zoom has been applied
+        self.compound_line_points_x_original = []
+        self.compound_line_points_y_original = []
+        self.compound_lines_midpoint_x_original = [] 
+        self.compound_lines_midpoint_y_original = []
+        #other line properties
+        self.compound_lines_width = [] #width of the compound lines, pixels
+        self.compound_lines_colour = [] #colour of the compound line
+        self.lines_canvas_ids = [] #id of the line components, so we can delete it later
+        #flags
+        self.compound_lines_assigned_flag = False #have lines been stored yet
+
+
     def get_extreme_compound_lines(self):
         pass #placeholder
 
