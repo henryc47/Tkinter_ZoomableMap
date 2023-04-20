@@ -9,7 +9,6 @@ import tkinter as tk
 class ZoomMap:
     #create the map
     def __init__(self,map_width,map_height,window,background="white",zoom_control="<MouseWheel>",drag_start_control='<ButtonPress-1>',drag_end_control="<B1-Motion>",print_warnings=True,scroll_gain=1,zoom_gain=0.01):
-        print('foo')
         self.map_width = map_width #width (horizontal length) of the map display in pixels
         self.map_height = map_height #height (vertical length) of the map display in pixels
         self.map_center_x = int(self.map_width/2) #midpoint of the map in pixels, horizontal
@@ -177,10 +176,6 @@ class ZoomMap:
                 extremes_defined = True #we have defined extremes which we can compare to
 
         #return whether we have found extremes and the extremes (or placeholder if we have not found the extremes)
-        print('extreme east ',extreme_east)
-        print('extreme west ',extreme_west)
-        print('extreme north ',extreme_north)
-        print('extreme south ',extreme_south)
         return extremes_defined,extreme_north,extreme_south,extreme_east,extreme_west                
 
     #private tools for operating on nodes
@@ -280,6 +275,11 @@ class ZoomMap:
         self.nodes_y_original = self.nodes_y    
         self.node_canvas_ids = ['blank']*self.num_nodes #canvas ids for the nodes themsleves
     
+    
+    #apply zoom to nodes
+    def apply_zoom_nodes(self,zoom_delta,mouse_x,mouse_y):
+        pass
+
     #private tools for operating on pie_nodes
     
     #create containers to store pie chart nodes
@@ -363,6 +363,10 @@ class ZoomMap:
         extreme_east = max(self.pie_nodes_x_coords) #easternmost point has smallest x coordinate
         extreme_west = min(self.pie_nodes_x_coords) #westernmost point has largest x coordinate
         return extreme_north,extreme_south,extreme_east,extreme_west
+
+    #apply zoom to pie nodes
+    def apply_zoom_pie_nodes(self,zoom_delta,mouse_x,mouse_y):
+        pass
 
     #private tools for operating on lines
 
@@ -568,6 +572,10 @@ class ZoomMap:
         self.lines_midpoint_x_original = self.lines_midpoint_x
         self.lines_midpoint_y_original = self.lines_midpoint_y
 
+    #apply zoom to lines
+    def apply_zoom_lines(self,zoom_delta,mouse_x,mouse_y):
+        pass
+
     #private tools for operating on compound lines
 
     #find and return the most extreme coordinates found in the list of compound lines
@@ -661,6 +669,10 @@ class ZoomMap:
     def calculate_compound_line_pixel_coordinates(self):
         pass #placeholder
 
+    #apply zoom to compound lines
+    def apply_zoom_compound_lines(self,zoom_delta,mouse_x,mouse_y):
+        pass
+
     #tools to control overall movement of the map
 
     #zoom the map in/out
@@ -671,12 +683,15 @@ class ZoomMap:
         self.current_zoom = self.current_zoom*(1+zoom_delta) #update the accumulated zoom level
         self.current_zoom_offset_x = self.current_zoom_offset_x*(1+zoom_delta) - mouse_x*zoom_delta#calculate the new offset for x
         self.current_zoom_offset_y = self.current_zoom_offset_y*(1+zoom_delta) - mouse_y*zoom_delta#calculate the new offset for y
-        self.apply_correct_zoom(zoom_delta,mouse_x,mouse_y) #perform the zoom on all objects in the map
+        self.apply_zoom_all(zoom_delta,mouse_x,mouse_y) #perform the zoom on all objects in the map
         
 
-    #recreate existing objects in the correctly zoomed positions
-    def apply_correct_zoom(self,zoom_delta,mouse_x,mouse_y):
-        pass
+    #recreate existing objects in the correctly zoomed positions after a zoom
+    def apply_zoom_all(self,zoom_delta,mouse_x,mouse_y):
+        self.apply_zoom_nodes(zoom_delta,mouse_x,mouse_y) #zoom the nodes
+        self.apply_zoom_pie_nodes(zoom_delta,mouse_x,mouse_y) #zoom the pie nodes
+        self.apply_zoom_lines(zoom_delta,mouse_x,mouse_y) #zoom the lines
+        self.apply_zoom_compound_lines(zoom_delta,mouse_x,mouse_y) #zoom the compound lines
 
     #start dragging the map
     def drag_start(self,event):
