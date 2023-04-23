@@ -78,6 +78,7 @@ class ZoomMap:
             self.pixels_per_unit = pixels_per_unit
             self.start_x = start_x
             self.start_y = start_y
+            
         elif scale_mode=='semi-automatic': #semi-automatic scaling, manually set start_x and start_coordinates in the global frame and determine pixel scale automatically from requested extra_x and extra_y space in global coordinates
             self.start_x = start_x
             self.start_y = start_y
@@ -87,6 +88,15 @@ class ZoomMap:
             self.warning_print(warning_message)
             self.pixels_per_unit,self.start_x,self.start_y = self.get_automatic_scaling_boundaries(border_fraction_x,border_fraction_y)
 
+        #calculate coordinates of the screen centre
+        self.calculate_centre_coords()
+        print('centre, y = ',self.centre_y_coords,' x = ',self.centre_x_coords)
+        print('start, y = ',self.start_y,' x = ',self.start_x)
+
+    #calculate the central latitude and longitude from starting latitude and longitude and pixel density
+    def calculate_centre_coords(self):
+        self.centre_x_coords = self.start_x + (self.map_width/self.pixels_per_unit)*0.5 #get the central longitude
+        self.centre_y_coords = self.start_y - (self.map_height/self.pixels_per_unit)*0.5 #get the central latitude
 
     #automatically calculate and store the position of all objects in the (unzoomed) pixel coordinate system
     def calculate_pixel_coordinates(self):
@@ -102,10 +112,10 @@ class ZoomMap:
 
     #convert global coordinates to unzoomed pixel coordinates
     def convert_coords_to_pixels(self,coord_x,coord_y):
-        latitude_offset = coord_y-self.start_y #units between upper-left and position, y axis
-        longitude_offset = coord_x-self.start_x #units between upper left and position, x axis
-        y = -(latitude_offset)*self.pixels_per_unit #multiply by -1 as positive pixels are down, but positive coords are north
-        x = (longitude_offset)*self.pixels_per_unit 
+        latitude_offset = coord_y-self.centre_y_coords #units between centre and position, y axis
+        longitude_offset = coord_x-self.centre_x_coords #units between centre and position, x axis
+        y = self.map_center_y-(latitude_offset*self.pixels_per_unit) #flip offset along the y axis, as higher values in canvas coordinates are further down (south), opposite to geographic coordinates where south is negative
+        x = self.map_center_x+(longitude_offset*self.pixels_per_unit)
         return x,y
 
     #automatically calculate the scale of the map
@@ -712,8 +722,8 @@ class ZoomMap:
 
     #zoom the map in/out
     def zoom_map(self,event):
-        mouse_x = event.x #mouse x position
-        mouse_y = event.y #mouse y position
+        mouse_x = self.map.canvasx(event.x) #mouse x position, canvasx/canvasy gets the position on the canvas object rather than the raw pixel position, essential to allow scrolling
+        mouse_y = self.map.canvasy(event.y) #mouse y position
         print('ZOOM : mouse x =',mouse_x,'mouse y =',mouse_y) 
         zoom_delta = self.zoom_gain*event.delta
         self.current_zoom = self.current_zoom*(1+zoom_delta) #update the accumulated zoom level
