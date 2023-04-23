@@ -47,8 +47,14 @@ class ZoomMap:
         
         #create containers for objects to be displayed on the map
         self.init_objects()
-        
-       
+        #initialise important variables
+        self.reset_zoom_parameters()
+    
+    #create or reset zoom parameters to default values
+    def reset_zoom_parameters(self):
+        self.current_zoom = 1 #how far are we zoomed in at the moment
+        self.current_zoom_offset_x = 0 #offset from default origin (in pixels) in the x axis as a result of zoom
+        self.current_zoom_offset_y = 0 #offset from default origin (in pixels) in the x axis as a result of zoom
 
     #print a warning if warnings enabled
     def warning_print(self,message):
@@ -275,10 +281,29 @@ class ZoomMap:
         self.nodes_y_original = self.nodes_y    
         self.node_canvas_ids = ['blank']*self.num_nodes #canvas ids for the nodes themsleves
     
+
+    #recalculate the pixel position of a point after a zoom event
+    def recalculate_zoom_positions(self,zoom_delta,mouse_x,mouse_y,x,y):
+        #zoom in, keeping the mouse at the same position of the screen
+        new_x = ((x-mouse_x)*(1+zoom_delta))+mouse_x #do this for x
+        new_y = ((y-mouse_y)*(1+zoom_delta))+mouse_y #and y
+        return new_x,new_y
     
+    #recalculate the pixel position of a list of points after a zoom event
+    def recalculate_list_zoom_positions(self,zoom_delta,mouse_x,mouse_y,length_list,list_x,list_y):
+        new_list_x = [] #empty list to store new x positions
+        new_list_y = [] #empty list to store new y positions
+        for i in range(length_list): #go through the whole of both lists (which must be the same length)
+            new_x,new_y = self.recalculate_zoom_positions(zoom_delta,mouse_x,mouse_y,list_x[i],list_y[i]) #for each entry in the list, calculate the zoomed x and y position
+            new_list_x.append(new_x) #store the new x position
+            new_list_y.append(new_y) #store the new y position
+        return new_list_x,new_list_y
+
     #apply zoom to nodes
     def apply_zoom_nodes(self,zoom_delta,mouse_x,mouse_y):
-        pass
+        #update the positions of the nodes
+        self.nodes_x,self.nodes_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_nodes,self.nodes_x,self.nodes_y)
+        self.render_nodes() #rerender the nodes
 
     #private tools for operating on pie_nodes
     
@@ -366,7 +391,8 @@ class ZoomMap:
 
     #apply zoom to pie nodes
     def apply_zoom_pie_nodes(self,zoom_delta,mouse_x,mouse_y):
-        pass
+        
+        self.render_pie_nodes() #once we have applied the zoom, render the pie nodes
 
     #private tools for operating on lines
 
@@ -574,7 +600,8 @@ class ZoomMap:
 
     #apply zoom to lines
     def apply_zoom_lines(self,zoom_delta,mouse_x,mouse_y):
-        pass
+        
+        self.render_lines() #once we have applied the zoom, render the lines
 
     #private tools for operating on compound lines
 
@@ -671,7 +698,8 @@ class ZoomMap:
 
     #apply zoom to compound lines
     def apply_zoom_compound_lines(self,zoom_delta,mouse_x,mouse_y):
-        pass
+        
+         self.render_compound_lines() #once we have applied the zoom, render the compound lines
 
     #tools to control overall movement of the map
 
