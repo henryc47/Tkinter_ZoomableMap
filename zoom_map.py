@@ -714,7 +714,6 @@ class ZoomMap:
     def zoom_map(self,event):
         mouse_x = self.map.canvasx(event.x) #mouse x position
         mouse_y = self.map.canvasy(event.y) #mouse y position
-        print('ZOOM : mouse x =',mouse_x,'mouse y =',mouse_y) 
         zoom_delta = self.zoom_gain*event.delta
         self.current_zoom = self.current_zoom*(1+zoom_delta) #update the accumulated zoom level
         self.current_zoom_offset_x = self.current_zoom_offset_x*(1+zoom_delta) - mouse_x*zoom_delta#calculate the new offset for x
