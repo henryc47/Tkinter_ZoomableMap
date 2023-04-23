@@ -31,16 +31,16 @@ class example():
         self.setup_map() #create the map
 
     def setup_data(self):
-        while True: #wait till valid mode selected
-            select_mode = input("Are we using 'manual' or 'node' lines: ")
-            if select_mode == 'manual':
-                print("manual lines selected")
-                break
-            elif select_mode == 'node':
-                print('node lines selected')
-                break
-            else:
-                print(select_mode," not a valid mode, please type 'manual' or 'node' ")
+        # while True: #wait till valid mode selected
+        #    select_mode = input("Are we using 'manual' or 'node' lines: ")
+        #    if select_mode == 'manual':
+        #        print("manual lines selected")
+        #        break
+        #    elif select_mode == 'node':
+        #        print('node lines selected')
+        #        break
+        #    else:
+        #        print(select_mode," not a valid mode, please type 'manual' or 'node' ")
 
         #now we have selected a mode, import the example files
         nodes_csv = pd.read_csv('example_nodes.csv',thousands=r',')
