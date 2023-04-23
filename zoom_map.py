@@ -283,18 +283,25 @@ class ZoomMap:
     
 
     #recalculate the pixel position of a point after a zoom event
-    def recalculate_zoom_positions(self,zoom_delta,mouse_x,mouse_y,x,y):
+    def recalculate_zoom_position(self,zoom_delta,mouse_x,mouse_y,x,y):
         #zoom in, keeping the mouse at the same position of the screen
         new_x = ((x-mouse_x)*(1+zoom_delta))+mouse_x #do this for x
         new_y = ((y-mouse_y)*(1+zoom_delta))+mouse_y #and y
         return new_x,new_y
     
+    #
+    def recalculate_zoom_position_alt(self,zoom_delta,mouse_x,mouse_y,x,y):
+        #zoom in, keeping the mouse at the same position of the screen
+        new_x = x*(1+zoom_delta)-(mouse_x*zoom_delta) #do this for x
+        new_y = y*(1+zoom_delta)-(mouse_y*zoom_delta) #and y
+        return new_x,new_y
+
     #recalculate the pixel position of a list of points after a zoom event
     def recalculate_list_zoom_positions(self,zoom_delta,mouse_x,mouse_y,length_list,list_x,list_y):
         new_list_x = [] #empty list to store new x positions
         new_list_y = [] #empty list to store new y positions
         for i in range(length_list): #go through the whole of both lists (which must be the same length)
-            new_x,new_y = self.recalculate_zoom_positions(zoom_delta,mouse_x,mouse_y,list_x[i],list_y[i]) #for each entry in the list, calculate the zoomed x and y position
+            new_x,new_y = self.recalculate_zoom_position_alt(zoom_delta,mouse_x,mouse_y,list_x[i],list_y[i]) #for each entry in the list, calculate the zoomed x and y position
             new_list_x.append(new_x) #store the new x position
             new_list_y.append(new_y) #store the new y position
         return new_list_x,new_list_y
@@ -707,6 +714,7 @@ class ZoomMap:
     def zoom_map(self,event):
         mouse_x = event.x #mouse x position
         mouse_y = event.y #mouse y position
+        print('ZOOM : mouse x =',mouse_x,'mouse y =',mouse_y) 
         zoom_delta = self.zoom_gain*event.delta
         self.current_zoom = self.current_zoom*(1+zoom_delta) #update the accumulated zoom level
         self.current_zoom_offset_x = self.current_zoom_offset_x*(1+zoom_delta) - mouse_x*zoom_delta#calculate the new offset for x
