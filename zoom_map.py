@@ -462,15 +462,15 @@ class ZoomMap:
             midpoint_y = self.lines_midpoint_y[i]
             width = self.lines_width[i]
             colour = self.lines_colour[i]
-            if self.line_canvas_ids[i]!='blank':
+            if self.lines_canvas_ids[i]!='blank':
                 #delete the old line object if one exists
-                self.map.delete(self.line_canvas_ids[i])
+                self.map.delete(self.lines_canvas_ids[i])
             id = self.map.create_line(start_x,start_y,end_x,end_y,fill=colour,width=width) #draw the line
-            self.line_canvas_ids[i] = id #store the id so we can delete the object later
+            self.lines_canvas_ids[i] = id #store the id so we can delete the object later
 
     
     #create new lines and replace the existing lines #note this must be done after node creation if using nodes to define line start/end points 
-    def create_lines(self,lines_width,lines_colour,lines_name,info_name,info_type,lines_info,lines_start_node_type='none',lines_start_node_index=-1,lines_end_node_type='none',lines_end_node_index=-1,line_coords_prefer=False,lines_start_x_coord=0,lines_start_y_coord=0,lines_end_x_coord=0,lines_end_y_coord=0):
+    def create_lines(self,lines_width,lines_colour,lines_name,info_name,info_type,lines_info,lines_start_node_type='none',lines_start_node_index=-1,lines_end_node_type='none',lines_end_node_index=-1,line_coords_prefer=False,lines_start_x_coord=[],lines_start_y_coord=[],lines_end_x_coord=[],lines_end_y_coord=[]):
         self.init_lines() #reset line storage, removing all existing lines
         self.num_lines = len(lines_width) #number of lines
         self.assign_lines_width(lines_width) #assign width of all lines
@@ -479,6 +479,7 @@ class ZoomMap:
         self.assign_lines_info(info_name,info_type,lines_info) #assign info to lines
         self.assign_lines_nodes_and_positions(lines_start_node_type,lines_start_node_index,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord,lines_end_x_coord,lines_end_y_coord) #determine the position of the start and end of the line
         self.calculate_lines_midpoint() #calculate the midpoint of the line
+        self.lines_assigned_flag=True #lines have been assigned
 
     #assign the width of all the lines
     def assign_lines_width(self,lines_width):
@@ -510,18 +511,20 @@ class ZoomMap:
     #assign nodes and positions to determine the start and end of lines
     def assign_lines_nodes_and_positions(self,lines_start_node_type=[],lines_start_node_index=-1,lines_end_node_type=[],lines_end_node_index=-1,line_coords_prefer=False,lines_start_x_coord=[],lines_start_y_coord=[],lines_end_x_coord=[],lines_end_y_coord=[]):
         #empty list for node type indicates we are not using node types, all lines are generated from explicit positions (note this selection can be made independently for starting and ending nodes)
-        self.lines_start_x_coord,self.lines_start_y_coord,self.lines_start_node_type,self.lines_start_node_index = self.extract_position_nodes_for_lines(self,lines_start_node_type,lines_start_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord) #assign nodes and positions for start of line
-        self.lines_end_x_coord,self.lines_end_y_coord,self.lines_end_node_type,self.lines_end_node_index = self.extract_position_nodes_for_lines(self,lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_end_x_coord,lines_end_y_coord) #assign nodes and positions for end of line
+        self.lines_start_x_coord,self.lines_start_y_coord,self.lines_start_node_type,self.lines_start_node_index = self.extract_position_nodes_for_lines(lines_start_node_type,lines_start_node_index,line_coords_prefer,lines_start_x_coord,lines_start_y_coord) #assign nodes and positions for start of line
+        self.lines_end_x_coord,self.lines_end_y_coord,self.lines_end_node_type,self.lines_end_node_index = self.extract_position_nodes_for_lines(lines_end_node_type,lines_end_node_index,line_coords_prefer,lines_end_x_coord,lines_end_y_coord) #assign nodes and positions for end of line
 
     #calculate the midpoint of lines in global coordinates
     def calculate_lines_midpoint(self):
         for i in range(self.num_lines):
-            self.lines_midpoint_x_coord[i] = (self.lines_start_x_coord[i]+self.lines_end_x_coord[i])/2
-            self.lines_midpoint_y_coord[i] = (self.lines_start_y_coord[i]+self.lines_end_y_coord[i])/2
+            new_x = (self.lines_start_x_coord[i]+self.lines_end_x_coord[i])/2
+            new_y = (self.lines_start_y_coord[i]+self.lines_end_y_coord[i])/2
+            self.lines_midpoint_x_coord.append(new_x)
+            self.lines_midpoint_y_coord.append(new_y)
 
     #extract the position and nodes of lines
     def extract_position_nodes_for_lines(self,node_type,node_index,line_coords_prefer,lines_x_coord,lines_y_coord):
-        if len(node_type)==0 and len(lines_x_coord)>0: #we are not using nodes for any positions     
+        if len(node_type)==0 and len(lines_x_coord)>0: #we are not using nodes for any positions
             list_x_coord = lines_x_coord #we use this as is in this mode
             list_y_coord = lines_y_coord
             list_node_type = ['none']*self.num_lines #we are not using node for position
@@ -624,6 +627,7 @@ class ZoomMap:
         self.lines_end_y_original = self.lines_end_y
         self.lines_midpoint_x_original = self.lines_midpoint_x
         self.lines_midpoint_y_original = self.lines_midpoint_y
+        self.lines_canvas_ids = ['blank']*self.num_lines #canvas ids for the lines themsleves
 
     #apply zoom to lines
     def apply_zoom_lines(self,zoom_delta,mouse_x,mouse_y):
@@ -746,10 +750,12 @@ class ZoomMap:
 
     #recreate existing objects in the correctly zoomed positions after a zoom
     def apply_zoom_all(self,zoom_delta,mouse_x,mouse_y):
-        self.apply_zoom_nodes(zoom_delta,mouse_x,mouse_y) #zoom the nodes
-        self.apply_zoom_pie_nodes(zoom_delta,mouse_x,mouse_y) #zoom the pie nodes
+        #we wish to render lines before nodes so nodes appear on top
         self.apply_zoom_lines(zoom_delta,mouse_x,mouse_y) #zoom the lines
         self.apply_zoom_compound_lines(zoom_delta,mouse_x,mouse_y) #zoom the compound lines
+        self.apply_zoom_nodes(zoom_delta,mouse_x,mouse_y) #zoom the nodes
+        self.apply_zoom_pie_nodes(zoom_delta,mouse_x,mouse_y) #zoom the pie nodes
+        
 
     #start dragging the map
     def drag_start(self,event):

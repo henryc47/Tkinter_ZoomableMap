@@ -31,16 +31,18 @@ class example():
         self.setup_map() #create the map
 
     def setup_data(self):
-        # while True: #wait till valid mode selected
-        #    select_mode = input("Are we using 'manual' or 'node' lines: ")
-        #    if select_mode == 'manual':
-        #        print("manual lines selected")
-        #        break
-        #    elif select_mode == 'node':
-        #        print('node lines selected')
-        #        break
-        #    else:
-        #        print(select_mode," not a valid mode, please type 'manual' or 'node' ")
+        while True: #wait till valid mode selected
+           select_mode = input("Are we using 'manual' or 'node' lines: ")
+           if select_mode == 'manual':
+               print("manual lines selected")
+               self.node_type = 'none'
+               break
+           elif select_mode == 'node':
+               print('node lines selected')
+               self.node_type = 'node'
+               break
+           else:
+               print(select_mode," not a valid mode, please type 'manual' or 'node' ")
 
         #now we have selected a mode, import the example files
         nodes_csv = pd.read_csv('example_nodes.csv',thousands=r',')
@@ -58,6 +60,37 @@ class example():
         self.num_nodes = len(self.node_names)
         self.node_radii = [5]*self.num_nodes
         self.node_colours = ['black']*self.num_nodes
+        #extract info from lines
+        self.line_start_nodes = lines_csv["Start"].to_list()
+        self.line_end_nodes =   lines_csv["End"].to_list()
+        self.num_lines = len(self.line_start_nodes)
+        self.line_width = [3]*self.num_lines
+        self.line_colour = ['grey']*self.num_lines
+        self.line_names = ['testing name']*self.num_lines
+        self.line_info_name = 'none'
+        self.line_info_type = 'none'
+        self.lines_info = ['nothing']*self.num_lines
+        if self.node_type=='node':
+            self.start_node_index = []
+            self.end_node_index = []
+            self.start_node_type = ['node']*self.num_lines
+            self.end_node_type = ['node']*self.num_lines
+            for i in range(self.num_lines):
+                start_node_name = self.line_start_nodes[i]
+                end_node_name = self.line_end_nodes[i]
+                start_node_index = self.get_node_index(start_node_name)
+                end_node_index = self.get_node_index(end_node_name)
+                self.start_node_index.append(start_node_index)
+                self.end_node_index.append(end_node_index)
+                
+
+    
+    #lookup a node name within the list of nodes and return it's index
+    #this does not have any safety mechanisms yet
+    def get_node_index(self,node_name):
+        node_index = self.node_names.index(node_name)
+        return node_index
+
 
     #create the window in which our map will be displayed
     def create_window(self):
@@ -74,10 +107,14 @@ class example():
         map_width = window_width-440
         map_height = window_height-100
         self.map = zoom_map.ZoomMap(map_width,map_height,self.window,'white')
+        #option selection
         #now map is created, draw the nodes
         self.map.create_nodes(self.node_longitudes,self.node_latitudes,self.node_radii,self.node_colours,self.node_names)
+        if self.node_type=='node':
+            self.map.create_lines(self.line_width,self.line_colour,self.line_names,self.line_info_name,self.line_info_type,self.lines_info,lines_start_node_type=self.start_node_type,lines_end_node_type=self.end_node_type,lines_start_node_index=self.start_node_index,lines_end_node_index=self.end_node_index)
         self.map.determine_scale() #use automatic scaling by default
         self.map.calculate_pixel_coordinates() #calculate pixel coordinates of objects
+        self.map.render_lines() #render the lines
         self.map.render_nodes() #render the nodes
 
         
