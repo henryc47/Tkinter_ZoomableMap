@@ -452,7 +452,22 @@ class ZoomMap:
 
     #render the lines PLACEHOLDER
     def render_lines(self):
-        pass
+        for i in range(self.num_lines): #go through all the lines
+            #extract data about the line
+            start_x = self.lines_start_x[i]
+            start_y = self.lines_start_y[i]
+            end_x = self.lines_end_x[i]
+            end_y = self.lines_end_y[i]
+            midpoint_x = self.lines_midpoint_x[i]
+            midpoint_y = self.lines_midpoint_y[i]
+            width = self.lines_width[i]
+            colour = self.lines_colour[i]
+            if self.line_canvas_ids[i]!='blank':
+                #delete the old line object if one exists
+                self.map.delete(self.line_canvas_ids[i])
+            id = self.map.create_line(start_x,start_y,end_x,end_y,fill=colour,width=width) #draw the line
+            self.line_canvas_ids[i] = id #store the id so we can delete the object later
+
     
     #create new lines and replace the existing lines #note this must be done after node creation if using nodes to define line start/end points 
     def create_lines(self,lines_width,lines_colour,lines_name,info_name,info_type,lines_info,lines_start_node_type='none',lines_start_node_index=-1,lines_end_node_type='none',lines_end_node_index=-1,line_coords_prefer=False,lines_start_x_coord=0,lines_start_y_coord=0,lines_end_x_coord=0,lines_end_y_coord=0):
