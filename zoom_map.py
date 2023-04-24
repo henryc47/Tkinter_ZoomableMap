@@ -713,7 +713,7 @@ class ZoomMap:
     #apply zoom to compound lines
     def apply_zoom_compound_lines(self,zoom_delta,mouse_x,mouse_y):
          self.compound_line_points_x,self.compound_line_points_y = self.recalculate_list_of_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_compound_lines,self.compound_line_points_x,self.compound_line_points_y) #zoom the points that make up the compound lines
-         self.compound_lines_midpoint_x,self.compound_line_midpoint_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_compound_lines,self.compound_lines_midpoint_x,self.compound_line_midpoint_y) #zoom the midpoint of the compound lines
+         self.compound_lines_midpoint_x,self.compound_line_midpoint_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_compound_lines,self.compound_lines_midpoint_x,self.compound_lines_midpoint_y) #zoom the midpoint of the compound lines
          self.render_compound_lines() #once we have applied the zoom, render the compound lines
 
     #tools to control overall movement of the map
