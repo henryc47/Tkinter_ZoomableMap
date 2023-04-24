@@ -282,15 +282,7 @@ class ZoomMap:
         self.node_canvas_ids = ['blank']*self.num_nodes #canvas ids for the nodes themsleves
     
 
-    #recalculate the pixel position of a point after a zoom event
     def recalculate_zoom_position(self,zoom_delta,mouse_x,mouse_y,x,y):
-        #zoom in, keeping the mouse at the same position of the screen
-        new_x = ((x-mouse_x)*(1+zoom_delta))+mouse_x #do this for x
-        new_y = ((y-mouse_y)*(1+zoom_delta))+mouse_y #and y
-        return new_x,new_y
-    
-    #
-    def recalculate_zoom_position_alt(self,zoom_delta,mouse_x,mouse_y,x,y):
         #zoom in, keeping the mouse at the same position of the screen
         new_x = x*(1+zoom_delta)-(mouse_x*zoom_delta) #do this for x
         new_y = y*(1+zoom_delta)-(mouse_y*zoom_delta) #and y
@@ -301,10 +293,23 @@ class ZoomMap:
         new_list_x = [] #empty list to store new x positions
         new_list_y = [] #empty list to store new y positions
         for i in range(length_list): #go through the whole of both lists (which must be the same length)
-            new_x,new_y = self.recalculate_zoom_position_alt(zoom_delta,mouse_x,mouse_y,list_x[i],list_y[i]) #for each entry in the list, calculate the zoomed x and y position
+            new_x,new_y = self.recalculate_zoom_position(zoom_delta,mouse_x,mouse_y,list_x[i],list_y[i]) #for each entry in the list, calculate the zoomed x and y position
             new_list_x.append(new_x) #store the new x position
             new_list_y.append(new_y) #store the new y position
         return new_list_x,new_list_y
+
+    #like recalculate_list_zoom_positions, but operates on lists of lists (useful for compound lines)
+    def recalculate_list_of_list_zoom_positions(self,zoom_delta,mouse_x,mouse_y,length_list,list_x,list_y):
+        new_list_x = [] #empty list of lists to store new x positions
+        new_list_y = [] #empty list of lists to store new y positions
+        for i in range(length_list): #go through the whole of both lists of lists (which must have the same number of lists)
+            sublist_x = list_x[i] #extract the sublist in the x dimension
+            sublist_y = list_y[i] #extract the sublist in the y dimension
+            sublist_length = len(sublist_x) #length of the sublist
+            new_sublist_x,new_sublist_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,sublist_length,sublist_x,sublist_y) #for each sublist, calculate zoomed positions
+            new_list_x.append(new_sublist_x) #add the sublists to the whole list
+            new_list_y.append(new_sublist_y)
+        return new_list_x,new_list_y 
 
     #apply zoom to nodes
     def apply_zoom_nodes(self,zoom_delta,mouse_x,mouse_y):
@@ -398,7 +403,7 @@ class ZoomMap:
 
     #apply zoom to pie nodes
     def apply_zoom_pie_nodes(self,zoom_delta,mouse_x,mouse_y):
-        
+        self.pie_nodes_x,self.pie_nodes_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_pie_nodes,self.pie_nodes_x,self.pie_nodes_y)
         self.render_pie_nodes() #once we have applied the zoom, render the pie nodes
 
     #private tools for operating on lines
@@ -607,7 +612,9 @@ class ZoomMap:
 
     #apply zoom to lines
     def apply_zoom_lines(self,zoom_delta,mouse_x,mouse_y):
-        
+        self.lines_start_x,self.lines_start_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_lines,self.lines_start_x,self.lines_start_y) #calculate zoom for start of line
+        self.lines_end_x,self.lines_end_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_lines,self.lines_end_x,self.lines_end_y) #calculate zoom for end of line
+        self.lines_midpoint_x,self.lines_midpoint_y = self.recalculate_list_zoom_positions(zoom_delta,mouse_x,mouse_y,self.num_lines,self.lines_midpoint_x,self.lines_midpoint_y) #calculate zoom for middle of line
         self.render_lines() #once we have applied the zoom, render the lines
 
     #private tools for operating on compound lines
